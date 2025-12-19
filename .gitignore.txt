@@ -21,3 +21,9 @@ out-tsc/
 # Sistema
 .DS_Store
 Thumbs.db
+
+# Python
+venv/
+__pycache__/
+*.pyc
+.env
