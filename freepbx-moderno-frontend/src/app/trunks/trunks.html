@@ -1,7 +1,9 @@
 <!--  //src/app/trunks/trunks.html -->
-<h1>Troncales</h1>
+  <p>DEBUG: trunks.length = {{ trunks.length }}</p>
+<h2>Troncales SIP</h2>
+
 <button (click)="loadTrunks()" [disabled]="loading" class="btn-refresh">
-    {{ loading ? 'Cargando...' : 'Actualizar' }}
+  {{ loading ? 'Cargando...' : 'Actualizar' }}
 </button>
 
 @if (loading) {

@@ -1,8 +1,18 @@
-<!-- //src/app/calls/calss.html--><h2>Últimas llamadas</h2>
-<button (click)="loadCalls()" [disabled]="loading" class="btn-refresh">
-  {{ loading ? 'Cargando...' : 'Actualizar' }}
-</button>
+<!-- //src/app/calls/calss.html-->
+<h2>Llamadas</h2>
 
+<!-- Filtros -->
+<div class="filters">
+  <button (click)="changePeriod('today')" [class.active]="currentPeriod === 'today'" class="filter-btn">Hoy</button>
+  <button (click)="changePeriod('week')" [class.active]="currentPeriod === 'week'" class="filter-btn">Últimos 7 días</button>
+  <button (click)="changePeriod('month')" [class.active]="currentPeriod === 'month'" class="filter-btn">Últimos 30 días</button>
+  <button (click)="changePeriod('year')" [class.active]="currentPeriod === 'year'" class="filter-btn">Último año</button>
+</div>
+
+<!-- Resumen -->
+<p>{{ totalCalls }} llamadas encontradas.</p>
+
+<!-- Tabla -->
 @if (calls.length > 0) {
   <table class="calls-table">
     <thead>
@@ -29,5 +39,18 @@
     </tbody>
   </table>
 } @else if (!loading) {
-  <p>No hay llamadas recientes.</p>
+  <p>No hay llamadas en este período.</p>
+}
+
+<!-- Paginación -->
+@if (totalPages > 1) {
+  <div class="pagination">
+    <button (click)="loadCalls(1)" [disabled]="currentPage === 1">Primera</button>
+    <button (click)="loadCalls(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
+    
+    <span>{{ currentPage }} / {{ totalPages }}</span>
+    
+    <button (click)="loadCalls(currentPage + 1)" [disabled]="currentPage === totalPages">Siguiente</button>
+    <button (click)="loadCalls(totalPages)" [disabled]="currentPage === totalPages">Última</button>
+  </div>
 }

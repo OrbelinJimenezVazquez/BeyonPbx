@@ -1,31 +1,33 @@
-// src/app/dashboard/dashboard.component.ts
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../core/api.service';
-import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   templateUrl: './dashboard.html',
-  styleUrls: ['./dashboard.css'],
-  providers: [DatePipe]
+  styleUrls: ['./dashboard.css']
 })
 export class DashboardComponent implements OnInit {
-  calls: any[] = [];
-  loading = true;
+  stats: any = {};
+  loading = false;
 
   constructor(private api: ApiService) {}
 
-  ngOnInit(): void {
-    this.api.getRecentCalls().subscribe({
+  loadStats() {
+    this.loading = true;
+    this.api.getDashboardStats().subscribe({
       next: (data) => {
-        this.calls = data;
+        this.stats = data;
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error al cargar llamadas', err);
+        console.error('Error:', err);
         this.loading = false;
       }
     });
+  }
+
+  ngOnInit(): void {
+    this.loadStats();
   }
 }

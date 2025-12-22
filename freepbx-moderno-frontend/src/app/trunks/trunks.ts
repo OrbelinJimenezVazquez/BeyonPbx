@@ -15,22 +15,25 @@ export class TrunksComponent implements OnInit {
   constructor(private api: ApiService) {}
 
   loadTrunks() {
+    console.log('loadTrunks ejecutado');
     this.loading = true;
     this.api.getTrunks().subscribe({
       next: (data) => {
-        console.log('Troncales recibidas:', data);
+        console.log('Troncales actualizadas:', data);
         this.trunks = data || [];
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error al cargar troncales', err);
+        console.error('Error:', err);
         this.loading = false;
-        alert('No se pudieron cargar las troncales.');
+        alert('Error al cargar troncales');
       }
     });
   }
+  
 
   ngOnInit(): void {
-    this.loadTrunks();
+    this.loadTrunks(); // solo llama, no define
   }
+  
 }
