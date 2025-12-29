@@ -1,5 +1,5 @@
 <!--// src/app/dashboard/dashboard.html -->
-<h1>Dashboard FreePBX</h1>
+<h1>Dashboard PBX </h1>
 
 <button (click)="loadStats()" [disabled]="loading" class="btn-refresh">
   {{ loading ? 'Cargando...' : 'Actualizar' }}
@@ -36,21 +36,60 @@
     </div>
   </div>
 
-  <!-- Gráficos -->
+  <!-- Gráficos principales -->
   <div class="charts-container">
     <div class="chart-card">
-      <h3>Llamadas por hora (últimas 24h)</h3>
-      <canvas #hourlyChart></canvas>
+      <h3>Estado de Llamadas</h3>
+      <canvas #statusChart></canvas>
     </div>
 
     <div class="chart-card">
-      <h3>Tendencias diarias</h3>
-      <canvas #dailyChart></canvas>
+      <h3>Tiempos de Espera (promedio)</h3>
+      <canvas #waitChart></canvas>
     </div>
 
     <div class="chart-card">
-      <h3>Distribución de destinos</h3>
+      <h3>Top Agentes (llamadas contestadas)</h3>
+      <canvas #agentChart></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h3>Tendencia de Llamadas</h3>
+      <canvas #trendChart></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h3>Distribución por Tipo</h3>
       <canvas #destChart></canvas>
+    </div>
+  </div>
+
+  <!-- Tabla de top agentes -->
+  <div class="table-card">
+    <h3>Top Agentes (últimos 7 días)</h3>
+    <div class="table-container">
+      <table class="agents-table">
+        <thead>
+          <tr>
+            <th>Agente</th>
+            <th>Extensión</th>
+            <th>Total Llamadas</th>
+            <th>Llamadas Contestadas</th>
+            <th>Tasa de Respuesta</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (agent of stats.top_agents; track agent.extension) {
+            <tr>
+              <td>{{ agent.name }}</td>
+              <td>{{ agent.extension }}</td>
+              <td>{{ agent.total_calls }}</td>
+              <td>{{ agent.answered_calls }}</td>
+              <td>{{ agent.answered_calls > 0 ? (agent.answered_calls / agent.total_calls * 100 | number:'1.1-1') : 0 }}%</td>
+            </tr>
+          }
+        </tbody>
+      </table>
     </div>
   </div>
 

@@ -137,62 +137,108 @@ def get_trunks(db: Session = Depends(get_db)):
 def get_advanced_dashboard_stats(db: Session = Depends(get_db)):
     now = datetime.now()
     
-    # 1. Métricas generales (ya las tenías)
+    # Fechas
     today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    week_start = now - timedelta(days=7)
     month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     
+    # 1. Métricas generales
     today_stats = db.execute(text("""
         SELECT 
             COUNT(*), 
             AVG(duration), 
-            SUM(CASE WHEN disposition = 'ANSWERED' THEN 1 ELSE 0 END)
+            SUM(CASE WHEN disposition = 'ANSWERED' THEN 1 ELSE 0 END),
+            SUM(CASE WHEN disposition = 'NO ANSWER' THEN 1 ELSE 0 END),
+            SUM(CASE WHEN disposition = 'FAILED' THEN 1 ELSE 0 END)
         FROM asteriskcdrdb.cdr 
         WHERE calldate >= :start_date
     """), {"start_date": today_start}).fetchone()
     
     week_stats = db.execute(text("""
-        SELECT COUNT(*) FROM asteriskcdrdb.cdr WHERE calldate >= :start_date
-    """), {"start_date": now - timedelta(days=7)}).fetchone()
-
+        SELECT 
+            COUNT(*),
+            SUM(CASE WHEN disposition = 'ANSWERED' THEN 1 ELSE 0 END)
+        FROM asteriskcdrdb.cdr 
+        WHERE calldate >= :start_date
+    """), {"start_date": week_start}).fetchone()
+    
     month_stats = db.execute(text("""
-        SELECT COUNT(*) FROM asteriskcdrdb.cdr WHERE calldate >= :start_date
+        SELECT 
+            COUNT(*),
+            AVG(duration),
+            AVG(duration - billsec) as avg_wait_time
+        FROM asteriskcdrdb.cdr 
+        WHERE calldate >= :start_date
     """), {"start_date": month_start}).fetchone()
     
-    # 2. Llamadas por hora (últimas 24 horas)
-    hourly_calls = db.execute(text("""
+    # 2. Llamadas contestadas vs no contestadas (últimos 7 días)
+    answered_stats = db.execute(text("""
         SELECT 
-            HOUR(calldate) as hour,
-            COUNT(*) as calls
-        FROM asteriskcdrdb.cdr
-        WHERE calldate >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
-        GROUP BY HOUR(calldate)
-        ORDER BY hour
-    """)).fetchall()
-    
-    hourly_data = [{"hour": r[0], "calls": r[1]} for r in hourly_calls]
-    
-    # 3. Distribución por destino (últimos 7 días)
-    destination_stats = db.execute(text("""
-        SELECT 
-            dst,
-            COUNT(*) as calls
+            SUM(CASE WHEN disposition = 'ANSWERED' THEN 1 ELSE 0 END) as answered,
+            SUM(CASE WHEN disposition = 'NO ANSWER' THEN 1 ELSE 0 END) as no_answer,
+            SUM(CASE WHEN disposition = 'FAILED' THEN 1 ELSE 0 END) as failed,
+            SUM(CASE WHEN disposition = 'BUSY' THEN 1 ELSE 0 END) as busy
         FROM asteriskcdrdb.cdr
         WHERE calldate >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+    """)).fetchone()
+    
+    # 3. Tiempos de espera promedio por extensión (últimos 7 días)
+    wait_time_stats = db.execute(text("""
+        SELECT 
+            dst as extension,
+            COUNT(*) as total_calls,
+            AVG(duration - billsec) as avg_wait_time
+        FROM asteriskcdrdb.cdr
+        WHERE calldate >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        AND duration > billsec
         GROUP BY dst
-        ORDER BY calls DESC
+        ORDER BY avg_wait_time DESC
         LIMIT 10
     """)).fetchall()
     
-    dest_data = [{"destination": r[0], "calls": r[1]} for r in destination_stats]
+    wait_data = [
+        {
+            "extension": r[0],
+            "avg_wait_time": round(r[2] or 0, 1),
+            "total_calls": r[1]
+        }
+        for r in wait_time_stats
+    ]
     
-    # 4. Tasa de respuesta por día (últimos 7 días)
-    daily_stats = db.execute(text("""
+    # 4. Top agentes por llamadas contestadas
+    agent_stats = db.execute(text("""
+        SELECT 
+            dst as extension,
+            u.name as agent_name,
+            COUNT(*) as total_calls,
+            SUM(CASE WHEN disposition = 'ANSWERED' THEN 1 ELSE 0 END) as answered_calls
+        FROM asteriskcdrdb.cdr c
+        LEFT JOIN asterisk.users u ON c.dst = u.extension
+        WHERE calldate >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        GROUP BY dst
+        HAVING answered_calls > 0
+        ORDER BY answered_calls DESC
+        LIMIT 10
+    """)).fetchall()
+    
+    agent_data = [
+        {
+            "extension": r[0],
+            "name": r[1] or r[0],
+            "total_calls": r[2],
+            "answered_calls": r[3]
+        }
+        for r in agent_stats
+    ]
+    
+    # 5. Tendencia de llamadas por día
+    daily_trend = db.execute(text("""
         SELECT 
             DATE(calldate) as date,
             COUNT(*) as total,
             SUM(CASE WHEN disposition = 'ANSWERED' THEN 1 ELSE 0 END) as answered
         FROM asteriskcdrdb.cdr
-        WHERE calldate >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        WHERE calldate >= DATE_SUB(NOW(), INTERVAL 14 DAY)
         GROUP BY DATE(calldate)
         ORDER BY date
     """)).fetchall()
@@ -201,13 +247,37 @@ def get_advanced_dashboard_stats(db: Session = Depends(get_db)):
         {
             "date": r[0].strftime('%Y-%m-%d'),
             "total": r[1],
-            "answered": r[2] or 0,
-            "rate": round(((r[2] or 0) / r[1] * 100), 1) if r[1] > 0 else 0
+            "answered": r[2] or 0
         }
-        for r in daily_stats
+        for r in daily_trend
     ]
     
-    # 5. Extensiones activas (como ya tenías)
+    # 6. Distribución por tipo de destino
+    dest_distribution = db.execute(text("""
+        SELECT 
+            CASE 
+                WHEN dst REGEXP '^[0-9]{3,4}$' THEN 'Extensión'
+                WHEN dst LIKE '%queue%' THEN 'Cola'
+                WHEN dst LIKE '%ivr%' THEN 'IVR'
+                WHEN dst LIKE '%s%' THEN 'Entrada'
+                ELSE 'Otro'
+            END as destination_type,
+            COUNT(*) as calls
+        FROM asteriskcdrdb.cdr
+        WHERE calldate >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        GROUP BY destination_type
+        ORDER BY calls DESC
+    """)).fetchall()
+    
+    dest_data = [
+        {
+            "type": r[0],
+            "calls": r[1]
+        }
+        for r in dest_distribution
+    ]
+    
+    # Extensiones activas
     active_extensions = db.execute(text("""
         SELECT COUNT(*)
         FROM asterisk.users u
@@ -223,13 +293,22 @@ def get_advanced_dashboard_stats(db: Session = Depends(get_db)):
             "calls_this_week": week_stats[0] or 0,
             "calls_this_month": month_stats[0] or 0,
             "avg_duration": round(today_stats[1] or 0, 1),
-            "answered_calls": today_stats[2] or 0,
+            "answered_calls_today": today_stats[2] or 0,
+            "no_answer_calls_today": today_stats[3] or 0,
+            "failed_calls_today": today_stats[4] or 0,
             "answer_rate": round(((today_stats[2] or 0) / (today_stats[0] or 1) * 100), 1),
             "active_extensions": active_extensions[0] or 0
         },
-        "hourly_calls": hourly_data,
-        "destination_distribution": dest_data,
-        "daily_trends": daily_data
+        "call_status": {
+            "answered": answered_stats[0] or 0,
+            "no_answer": answered_stats[1] or 0,
+            "failed": answered_stats[2] or 0,
+            "busy": answered_stats[3] or 0
+        },
+        "wait_times": wait_data,
+        "top_agents": agent_data,
+        "daily_trends": daily_data,
+        "destination_distribution": dest_data
     }
 
 # Endpoint para Obtener lista de IVRs con sus opciones y estadísticas
