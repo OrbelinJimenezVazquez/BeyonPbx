@@ -150,6 +150,10 @@ def get_advanced_dashboard_stats(db: Session = Depends(get_db)):
         WHERE calldate >= :start_date
     """), {"start_date": today_start}).fetchone()
     
+    week_stats = db.execute(text("""
+        SELECT COUNT(*) FROM asteriskcdrdb.cdr WHERE calldate >= :start_date
+    """), {"start_date": now - timedelta(days=7)}).fetchone()
+
     month_stats = db.execute(text("""
         SELECT COUNT(*) FROM asteriskcdrdb.cdr WHERE calldate >= :start_date
     """), {"start_date": month_start}).fetchone()
@@ -216,6 +220,7 @@ def get_advanced_dashboard_stats(db: Session = Depends(get_db)):
     return {
         "general": {
             "calls_today": today_stats[0] or 0,
+            "calls_this_week": week_stats[0] or 0,
             "calls_this_month": month_stats[0] or 0,
             "avg_duration": round(today_stats[1] or 0, 1),
             "answered_calls": today_stats[2] or 0,

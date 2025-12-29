@@ -1,8 +1,8 @@
 <!--// src/app/dashboard/dashboard.html -->
-<h1>📊 Dashboard FreePBX Moderno</h1>
+<h1>Dashboard FreePBX</h1>
 
 <button (click)="loadStats()" [disabled]="loading" class="btn-refresh">
-  🔄 {{ loading ? 'Cargando...' : 'Actualizar' }}
+  {{ loading ? 'Cargando...' : 'Actualizar' }}
 </button>
 
 @if (loading) {
@@ -11,23 +11,27 @@
   <!-- Métricas generales -->
   <div class="stats-grid">
     <div class="stat-card">
-      <h3>📞 Llamadas hoy</h3>
+      <h3>Llamadas hoy</h3>
       <p class="stat-value">{{ stats.general.calls_today }}</p>
     </div>
     <div class="stat-card">
-      <h3>📅 Llamadas este mes</h3>
+      <h3>Llamadas esta semana</h3>
+      <p class="stat-value">{{ stats.general.calls_this_week }}</p>
+    </div>
+    <div class="stat-card">
+      <h3>Llamadas este mes</h3>
       <p class="stat-value">{{ stats.general.calls_this_month }}</p>
     </div>
     <div class="stat-card">
-      <h3>⏱️ Duración promedio</h3>
+      <h3>Duración promedio</h3>
       <p class="stat-value">{{ stats.general.avg_duration }} seg</p>
     </div>
     <div class="stat-card">
-      <h3>✅ Tasa de respuesta</h3>
+      <h3>Tasa de respuesta</h3>
       <p class="stat-value">{{ stats.general.answer_rate }}%</p>
     </div>
     <div class="stat-card">
-      <h3>👥 Extensiones activas</h3>
+      <h3>Extensiones activas</h3>
       <p class="stat-value">{{ stats.general.active_extensions }}</p>
     </div>
   </div>
@@ -35,23 +39,23 @@
   <!-- Gráficos -->
   <div class="charts-container">
     <div class="chart-card">
-      <h3>📈 Llamadas por hora (últimas 24h)</h3>
+      <h3>Llamadas por hora (últimas 24h)</h3>
       <canvas #hourlyChart></canvas>
     </div>
 
     <div class="chart-card">
-      <h3>📉 Tendencias diarias</h3>
+      <h3>Tendencias diarias</h3>
       <canvas #dailyChart></canvas>
     </div>
 
     <div class="chart-card">
-      <h3>🎯 Distribución de destinos</h3>
+      <h3>Distribución de destinos</h3>
       <canvas #destChart></canvas>
     </div>
   </div>
 
   <!-- Botón exportar PDF -->
   <button (click)="downloadPdf()" class="btn-pdf">
-    📄 Generar Informe PDF
+    Generar Informe PDF
   </button>
 }
