@@ -1,0 +1,109 @@
+
+    <div class="flex h-screen">
+      <!-- Sidebar -->
+      <aside class="w-64 bg-dark-teal text-white flex flex-col">
+        <!-- Logo -->
+        <div class="h-16 flex items-center justify-center">
+          <span class="text-2xl font-bold text-frozen-lake tracking-widest">BEYOND</span>
+        </div>
+        
+        <!-- Navegación -->
+        <nav class="flex-1 py-4">
+          <ul class="space-y-1">
+            <li>
+              <a routerLink="/" 
+                 class="main-nav flex items-center px-6 py-3 hover:bg-ocean-blue transition-colors">
+                <span class="material-icons-outlined text-sm mr-3 ">dashboard</span>
+                <span class="text-sm font-medium">Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/extensions" 
+                 class=" main-nav flex items-center px-6 py-3 hover:bg-ocean-blue transition-colors">
+                <span class="material-icons-outlined text-sm mr-3">phone</span>
+                <span class="text-sm font-medium">Extensiones</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/calls" 
+                 class="main-nav flex items-center px-6 py-3 hover:bg-ocean-blue transition-colors">
+                <span class="material-icons-outlined text-sm mr-3">call</span>
+                <span class="text-sm font-medium">Llamadas</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/trunks" 
+                 class="main-nav flex items-center px-6 py-3 hover:bg-ocean-blue transition-colors">
+                <span class="material-icons-outlined text-sm mr-3">router</span>
+                <span class="text-sm font-medium">Troncales</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/ivr"
+                 class="main-nav flex items-center px-6 py-3 hover:bg-ocean-blue transition-colors">
+                <span class="material-icons-outlined text-sm mr-3">record_voice_over</span>
+                <span class="text-sm font-medium">IVR</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/incoming-routes" 
+                 class="main-nav flex items-center px-6 py-3 hover:bg-ocean-blue transition-colors">
+                <span class="material-icons-outlined text-sm mr-3">call_received</span>
+                <span class="text-sm font-medium">Rutas Entrantes</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/monitoring" 
+                 class="main-nav flex items-center px-6 py-3 hover:bg-ocean-blue transition-colors">
+                <span class="material-icons-outlined text-sm mr-3">show_chart</span>
+                <span class="text-sm font-medium">Monitoreo</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="flex-1 flex flex-col overflow-hidden">
+        <!-- Header -->
+        <header class="h-16 bg-bright-snow flex items-center justify-between px-6">
+          <div class="flex items-center">
+            <div class="relative w-full max-w-md">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center">
+                <span class="material-icons-outlined text-slate-grey text-lg">search</span>
+              </span>
+              <input 
+                class="w-full pl-10 pr-4 py-2 rounded-full border border-platinum bg-white text-sm focus:outline-none focus:ring-2 focus:ring-ocean-blue focus:border-transparent text-carbon-black transition-colors" 
+                placeholder="Buscar..." 
+                type="text"/>
+            </div>
+          </div>
+          
+          <div class="flex items-center space-x-4">
+            <button class="p-2 text-slate-grey hover:text-ocean-blue transition-colors rounded-full hover:bg-platinum">
+              <span class="material-icons-outlined text-xl">dark_mode</span>
+            </button>
+            
+            <button class="relative p-2 text-slate-grey hover:text-ocean-blue transition-colors">
+              <span class="material-icons-outlined text-xl">notifications</span>
+              <span class="absolute top-1 right-1 h-4 w-4 bg-raspberry text-white text-[10px] font-bold flex items-center justify-center rounded-full">3</span>
+            </button>
+            
+            <div class="flex items-center pl-4 border-l border-platinum">
+              <div class="h-9 w-9 rounded-full bg-medium-jungle text-white flex items-center justify-center font-bold text-sm">
+                ini
+              </div>
+              <div class="ml-3 hidden lg:block">
+                <p class="text-sm font-medium text-carbon-black">Nombre</p>
+                <p class="text-xs text-slate-grey">Administrator</p>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Content -->
+        <div class="flex-1 overflow-y-auto p-6">
+          <router-outlet></router-outlet>
+        </div>
+      </main>
+    </div>
