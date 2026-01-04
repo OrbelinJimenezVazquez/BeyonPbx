@@ -4,6 +4,9 @@ import { ApiService } from '../core/api.service';
 import { PdfService } from '../core/pdf.service';
 import { DecimalPipe } from '@angular/common';
 import { Chart, registerables } from 'chart.js';
+//Estos imports son para las notificiaciones y modales
+import { ToastService } from '../core/toast.service';
+import { ConfirmationService } from '../core/confirmation.service';
 
 
 Chart.register(...registerables);
@@ -13,7 +16,7 @@ Chart.register(...registerables);
   standalone: true,
   imports: [DecimalPipe],
   templateUrl: `./dashboard.html`,
-  styleUrls: [`./dashboard.css`, ]
+  styleUrls: [`./dashboard.css`,  ]
 })
 
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -38,11 +41,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private destChart: Chart | null = null;
 
   constructor(
-    private api: ApiService,
-    private pdfService: PdfService,
-    private cdr: ChangeDetectorRef
+    private api: ApiService, // Servicio API
+    private pdfService: PdfService, // Servicio para PDF
+    private cdr: ChangeDetectorRef, //  Para detección de cambios
+    private toast: ToastService, // Notificaciones
+    private confirmation: ConfirmationService, // Modales
   ) {}
-  
+
   loadStats(): void {
     this.loading = true;
     this.api.getAdvancedDashboardStats().subscribe({
@@ -78,7 +83,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.destroyChart(this.statusChart);
-    
+
     const ctx = this.statusChartRef.nativeElement.getContext('2d');
     this.statusChart = new Chart(ctx, {
       type: 'doughnut',
@@ -114,7 +119,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.destroyChart(this.trendChart);
-    
+
     const ctx = this.trendChartRef.nativeElement.getContext('2d');
     this.trendChart = new Chart(ctx, {
       type: 'line',
@@ -156,7 +161,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.destroyChart(this.agentChart);
-    
+
     const ctx = this.agentChartRef.nativeElement.getContext('2d');
     this.agentChart = new Chart(ctx, {
       type: 'bar',
@@ -187,7 +192,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.destroyChart(this.destChart);
-    
+
     const ctx = this.destChartRef.nativeElement.getContext('2d');
     this.destChart = new Chart(ctx, {
       type: 'pie',
@@ -222,7 +227,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async downloadPdf(): Promise<void> {
     if (!this.dashboardContainer) {
-      alert('No se puede exportar: contenedor no disponible');
+      this.toast.error('No se puede exportar: contenedor no disponible'); // Notificación de error
+      //alert('No se puede exportar: contenedor no disponible'); // Mensaje de alerta simple
       return;
     }
 
@@ -232,8 +238,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.stats
       );
     } catch (error) {
-      console.error('Error al generar PDF:', error);
-      alert('No se pudo generar el PDF. Revisa la consola para más detalles.');
+      this.toast.error('No se pudo generar el PDF. Por favor, intenta de nuevo.'); // Notificación de error
+      // console.error('Error al generar PDF:', error);
+      // alert('No se pudo generar el PDF. Revisa la consola para más detalles.'); // Mensaje de alerta simple
     }
   }
 

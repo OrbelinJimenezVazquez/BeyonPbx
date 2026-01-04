@@ -1,6 +1,7 @@
 <!-- src/app/dashboard/dashboard.html -->
+
 <div class="p-6 space-y-6">
-  <!-- Header -->
+  <!-- Header (mantener igual) -->
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
     <div class="flex items-center gap-4">
       <div class="w-12 h-12 rounded-2xl bg-[#2E86AB] flex items-center justify-center shadow-lg" style="background: linear-gradient(135deg, #2E86AB 0%, #56cfe1 100%);">
@@ -29,8 +30,50 @@
     </div>
   </div>
 
-  <!-- Stats Grid -->
-  @if (!loading) {
+  <!-- ⭐ SKELETON LOADERS -->
+  @if (loading) {
+    <div class="space-y-6">
+      <!-- Stats Cards Skeleton -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        @for (i of [1,2,3,4]; track i) {
+          <div class="stat-card-skeleton">
+            <div class="skeleton-circle"></div>
+            <div class="skeleton-lines">
+              <div class="skeleton-line short"></div>
+              <div class="skeleton-line medium"></div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Charts Skeleton -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        @for (i of [1,2,3,4]; track i) {
+          <div class="chart-card-skeleton">
+            <div class="skeleton-line short mb-4"></div>
+            <div class="skeleton-chart"></div>
+          </div>
+        }
+      </div>
+
+      <!-- Table Skeleton -->
+      <div class="table-skeleton">
+        <div class="px-6 py-5 border-b border-gray-100">
+          <div class="skeleton-line medium"></div>
+        </div>
+        @for (i of [1,2,3,4,5]; track i) {
+          <div class="table-row-skeleton">
+            <div class="skeleton-cell"><div class="skeleton-line"></div></div>
+            <div class="skeleton-cell"><div class="skeleton-line short"></div></div>
+            <div class="skeleton-cell"><div class="skeleton-line short"></div></div>
+            <div class="skeleton-cell"><div class="skeleton-line short"></div></div>
+            <div class="skeleton-cell"><div class="skeleton-line medium"></div></div>
+          </div>
+        }
+      </div>
+    </div>
+  } @else {
+    <!-- Stats Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       <!-- Llamadas Hoy -->
       <div class="stat-card fade-in-up">
@@ -191,13 +234,6 @@
           </tbody>
         </table>
       </div>
-    </div>
-  } @else {
-    <!-- Loading State -->
-    <div class="flex flex-col items-center justify-center py-20">
-      <div class="spinner mb-4"></div>
-      <p class="text-gray-500 text-lg font-medium">Cargando métricas del dashboard...</p>
-      <p class="text-gray-400 text-sm mt-2">Por favor espere un momento</p>
     </div>
   }
 </div>

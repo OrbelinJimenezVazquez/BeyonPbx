@@ -2,6 +2,9 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ApiService } from '../core/api.service';
 import { DatePipe } from '@angular/common';
+//Estos imports son para las notificiaciones y modales
+import { ToastService } from '../core/toast.service';
+import { ConfirmationService } from '../core/confirmation.service';
 
 @Component({
   selector: 'app-calls',
@@ -14,7 +17,7 @@ export class CallsComponent implements OnInit {
   calls: any[] = [];
   loading = false;
   currentPeriod: 'today' | 'week' | 'month' | 'year' = 'month';
-  
+
   // Paginación
   currentPage = 1;
   totalPages = 1;
@@ -23,13 +26,15 @@ export class CallsComponent implements OnInit {
 
 constructor(
   private api: ApiService,
-  private cdr: ChangeDetectorRef
+  private cdr: ChangeDetectorRef,
+  private toast: ToastService,
+  private confirmation: ConfirmationService
 ) {}
 
   loadCalls(page: number = 1) {
     this.loading = true;
     this.currentPage = page;
-    
+
     this.api.getDetailedCalls(this.currentPeriod, page, this.pageSize).subscribe({
       next: (response) => {
         this.calls = response.items || [];
@@ -37,11 +42,13 @@ constructor(
         this.totalPages = response.pages;
         this.loading = false;
         this.cdr.detectChanges();
+        this.toast.success(`${this.calls.length} llamadas cargadas correctamente`); // Notificación de éxito
       },
       error: (err) => {
         console.error('Error al cargar llamadas', err);
         this.loading = false;
-        alert('Error al cargar llamadas. Revisa la consola.');
+        this.toast.error('Error al cargar llamadas. Por favor, intenta de nuevo.'); // Notificación de error
+        // alert('Error al cargar llamadas. Revisa la consola.'); // Mensaje de alerta simple
       }
     });
   }

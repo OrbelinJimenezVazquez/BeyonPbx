@@ -22,12 +22,37 @@
 
   <!-- Estado de Carga -->
   @if (loading) {
-    <div class="flex flex-col items-center justify-center py-20">
-      <div class="spinner mb-4"></div>
-      <p class="text-gray-500 text-lg font-medium">Cargando IVRs...</p>
-      <p class="text-gray-400 text-sm mt-2">Por favor espere un momento</p>
+    <div class="space-y-6">
+      @for (i of [1,2,3]; track i) {
+        <div class="list-card-skeleton">
+          <!-- Header skeleton -->
+          <div class="skeleton-header">
+            <div class="skeleton-icon"></div>
+            <div class="skeleton-text-group">
+              <div class="skeleton-line medium"></div>
+              <div class="skeleton-line short"></div>
+            </div>
+          </div>
+
+          <!-- Opciones skeleton -->
+          <div class="space-y-3">
+            @for (j of [1,2,3,4]; track j) {
+              <div class="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                <div class="w-12 h-12 rounded-lg skeleton-base"></div>
+                <div class="flex-1">
+                  <div class="skeleton-line medium mb-2"></div>
+                  <div class="skeleton-line short"></div>
+                </div>
+                <div class="w-16">
+                  <div class="skeleton-line short"></div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
     </div>
-  }
+  } 
 
   <!-- Sin Resultados -->
   @else if (ivrs.length === 0) {

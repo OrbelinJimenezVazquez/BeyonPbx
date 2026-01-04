@@ -22,12 +22,19 @@
 
   <!-- Estado de Carga -->
   @if (loading) {
-    <div class="flex flex-col items-center justify-center py-20">
-      <div class="spinner mb-4"></div>
-      <p class="text-gray-500 text-lg font-medium">Cargando extensiones...</p>
-      <p class="text-gray-400 text-sm mt-2">Por favor espere un momento</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      @for (i of [1,2,3,4,5,6,7,8]; track i) {
+        <div class="extension-card-skeleton">
+          <div class="skeleton-avatar"></div>
+          <div class="skeleton-lines">
+            <div class="skeleton-line medium"></div>
+            <div class="skeleton-line short"></div>
+          </div>
+        </div>
+      }
     </div>
-  }  <!-- Sin Resultados -->
+  } 
+  <!-- Sin Resultados -->
   @else if (extensions.length === 0) {
     <div class="bg-white rounded-2xl border border-gray-200 p-12 text-center shadow-lg">
       <div class="w-20 h-20 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center mx-auto mb-4">

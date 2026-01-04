@@ -77,12 +77,35 @@
     </div>
   </div>
 
-  <!-- Estado de Carga -->
   @if (loading) {
-    <div class="flex flex-col items-center justify-center py-20">
-      <div class="spinner mb-4"></div>
-      <p class="text-gray-500 text-lg font-medium">Cargando llamadas...</p>
-      <p class="text-gray-400 text-sm mt-2">Por favor espere un momento</p>
+    <div class="table-skeleton">
+      <!-- Header de tabla skeleton -->
+      <div class="grid grid-cols-9 gap-4 px-6 py-3 bg-gray-50 border-b border-gray-200">
+        <div class="col-span-1"><div class="skeleton-line short"></div></div>
+        <div class="col-span-1"><div class="skeleton-line short"></div></div>
+        <div class="col-span-1"><div class="skeleton-line short"></div></div>
+        <div class="col-span-1"><div class="skeleton-line short"></div></div>
+        <div class="col-span-1"><div class="skeleton-line short"></div></div>
+        <div class="col-span-1"><div class="skeleton-line short"></div></div>
+        <div class="col-span-1"><div class="skeleton-line short"></div></div>
+        <div class="col-span-1"><div class="skeleton-line short"></div></div>
+        <div class="col-span-1"><div class="skeleton-line short"></div></div>
+      </div>
+
+      <!-- Rows skeleton -->
+      @for (i of [1,2,3,4,5,6,7,8]; track i) {
+        <div class="grid grid-cols-9 gap-4 px-6 py-4 border-b border-gray-100">
+          <div class="skeleton-cell"><div class="skeleton-line"></div></div>
+          <div class="skeleton-cell"><div class="skeleton-line"></div></div>
+          <div class="skeleton-cell"><div class="skeleton-line short"></div></div>
+          <div class="skeleton-cell"><div class="skeleton-line medium"></div></div>
+          <div class="skeleton-cell"><div class="skeleton-line"></div></div>
+          <div class="skeleton-cell"><div class="skeleton-line short"></div></div>
+          <div class="skeleton-cell"><div class="skeleton-line short"></div></div>
+          <div class="skeleton-cell"><div class="skeleton-line short"></div></div>
+          <div class="skeleton-cell"><div class="skeleton-line medium"></div></div>
+        </div>
+      }
     </div>
   }
 
