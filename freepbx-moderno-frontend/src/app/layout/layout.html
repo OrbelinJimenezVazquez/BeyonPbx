@@ -1,11 +1,11 @@
-<!-- src/app/layout/layout.html - Actualizado -->
+<!-- src/app/layout/layout.html  -->
 <div class="flex h-screen bg-gray-50">
   <!-- Sidebar -->
   <aside class="sidebar-modern">
     <!-- Logo Section -->
     <div class="sidebar-logo">
       <div class="logo-container">
-        <img src="../src/assets/img/Logo_Beyond_Header_w.png" alt="Beyond PBX Logo" class="logo-image">
+        <img src="img/Logo_Beyond_Header_w.png" alt="FreePBX Logo" class="logo-image"/> 
       </div>
     </div>
 
@@ -17,9 +17,8 @@
              routerLinkActive="nav-active"
              [routerLinkActiveOptions]="{exact: true}"
              class="nav-item">
-            <span class="material-icons-outlined nav-icon">dashboard</span>
+            <span class="material-icons-round nav-icon">dashboard</span>
             <span class="nav-text">Dashboard</span>
-            <div class="nav-indicator"></div>
           </a>
         </li>
         <li>
@@ -28,16 +27,14 @@
              class="nav-item">
             <span class="material-icons-outlined nav-icon">phone</span>
             <span class="nav-text">Extensiones</span>
-            <div class="nav-indicator"></div>
           </a>
         </li>
         <li>
           <a routerLink="/calls"
              routerLinkActive="nav-active"
              class="nav-item">
-            <span class="material-icons-outlined nav-icon">call</span>
+            <span class="material-icons-round nav-icon">call</span>
             <span class="nav-text">Llamadas</span>
-            <div class="nav-indicator"></div>
           </a>
         </li>
         <li>
@@ -46,16 +43,14 @@
              class="nav-item">
             <span class="material-icons-outlined nav-icon">router</span>
             <span class="nav-text">Troncales</span>
-            <div class="nav-indicator"></div>
           </a>
         </li>
         <li>
           <a routerLink="/ivr"
              routerLinkActive="nav-active"
              class="nav-item">
-            <span class="material-icons-outlined nav-icon">record_voice_over</span>
+            <span class="material-icons nav-icon">record_voice_over</span>
             <span class="nav-text">IVR</span>
-            <div class="nav-indicator"></div>
           </a>
         </li>
         <li>
@@ -64,7 +59,6 @@
              class="nav-item">
             <span class="material-icons-outlined nav-icon">call_received</span>
             <span class="nav-text">Rutas Entrantes</span>
-            <div class="nav-indicator"></div>
           </a>
         </li>
         <li>
@@ -73,7 +67,6 @@
              class="nav-item">
             <span class="material-icons-outlined nav-icon">show_chart</span>
             <span class="nav-text">Monitoreo</span>
-            <div class="nav-indicator"></div>
           </a>
         </li>
       </ul>
@@ -111,21 +104,21 @@
           (click)="toggleDarkMode()"
           class="header-icon-btn"
           title="Cambiar tema">
-          <span class="material-icons-outlined" *ngIf="!isDarkMode">dark_mode</span>
-          <span class="material-icons-outlined" *ngIf="isDarkMode">light_mode</span>
+          <span class="material-icons" *ngIf="!isDarkMode">dark_mode</span>
+          <span class="material-icons" *ngIf="isDarkMode">light_mode</span>
         </button>
 
         <!-- Notifications -->
-        <button class="header-icon-btn header-notification" title="Notificaciones">
-          <span class="material-icons-outlined">notifications</span>
+        <button class="header-icon-btn header-notification" id="icon-no" title="Notificaciones">
+          <span class="material-icons" >notifications</span>
           <span class="notification-badge">3</span>
         </button>
 
         <!-- Settings -->
         <button class="header-icon-btn" title="Configuración">
-          <span class="material-icons-outlined">settings</span>
+          <span class="material-icons">settings</span>
         </button>
-
+        <div class="divider"></div>
         <!-- User Menu -->
         <div class="user-menu">
           <div class="user-avatar">
@@ -136,7 +129,7 @@
             <p class="user-role">Sistema</p>
           </div>
           <button class="user-dropdown-btn">
-            <span class="material-icons-outlined text-lg">expand_more</span>
+            <span class="material-icons text-lg">expand_more</span>
           </button>
         </div>
       </div>
@@ -148,7 +141,6 @@
     </div>
   </main>
 
-  <!-- ⭐ NUEVOS COMPONENTES GLOBALES -->
   <!-- Toast Notifications -->
   <app-toast></app-toast>
 

@@ -1,3 +1,4 @@
+
 <!-- src/app/extensions/extensions.html -->
 <div class="p-6 space-y-6">
   <!-- Header -->
@@ -11,8 +12,8 @@
         <p class="text-sm text-gray-500 mt-1">Gestión de extensiones telefónicas</p>
       </div>
     </div>
-    <button
-      (click)="loadExtensions()"
+    <button 
+      (click)="loadExtensions()" 
       [disabled]="loading"
       class="btn-primary">
       <span class="material-icons-outlined text-lg">refresh</span>
@@ -43,23 +44,119 @@
       <h3 class="text-xl font-semibold text-gray-800 mb-2">No se encontraron extensiones</h3>
       <p class="text-gray-500">No hay extensiones configuradas en el sistema</p>
     </div>
-  } @else {
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-      @for (ext of extensions; track ext.extension + '_' + ext.name) {
-        <div class="extension-card">
-          <div class="flex justify-between items-center mb-2">
-            <span class="ext-number">{{ ext.extension }}</span>
-            <span class="ext-status" [class.online]="ext.status === 'online'" [class.offline]="ext.status === 'offline'">
-              @if (ext.status === 'online') {
-                Online
-              } @else {
-                Offline
-              }
-            </span>
+  } 
+  
+  <!-- Grid de Extensiones -->
+  @else {
+    <!-- Stats Summary -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-lg mb-6">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+            <span class="material-icons-outlined text-blue-600 text-xl">phone_enabled</span>
           </div>
-          <div class="ext-name">{{ ext.name || 'Sin nombre' }}</div>
+          <div>
+            <p class="text-xs text-gray-500">Total Extensiones</p>
+            <p class="text-xl font-bold text-gray-800">{{ extensions.length }}</p>
+          </div>
+        </div>
+        
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
+            <span class="material-icons-outlined text-green-600 text-xl">check_circle</span>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500">En Línea</p>
+            <p class="text-xl font-bold text-green-700">
+              {{ onlineCount }}
+            </p>
+          </div>
+        </div>
+        
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+            <span class="material-icons-outlined text-gray-600 text-xl">cancel</span>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500">Fuera de Línea</p>
+            <p class="text-xl font-bold text-gray-700">
+              {{ offlineCount }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grid de Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      @for (ext of extensions; track ext.extension + '_' + ext.name) {
+        <div class="extension-card-modern fade-in-up">
+          <!-- Header de la Card -->
+          <div class="flex items-start justify-between mb-3">
+            <!-- Avatar con inicial -->
+            <div class="relative">
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#2E86AB] to-[#56cfe1] flex items-center justify-center text-white text-xl font-bold shadow-lg">
+                {{ (ext.name || 'U').charAt(0).toUpperCase() }}
+              </div>
+              <!-- Indicador de estado -->
+              <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white shadow-md"
+                   [class.bg-green-500]="ext.status === 'online'"
+                   [class.bg-gray-400]="ext.status === 'offline'"
+                   [class.animate-pulse]="ext.status === 'online'">
+              </div>
+            </div>
+
+            <!-- Badge de Estado -->
+            @if (ext.status === 'online') {
+              <span class="status-badge-online">
+                <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+                En línea
+              </span>
+            } @else {
+              <span class="status-badge-offline">
+                <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
+                Offline
+              </span>
+            }
+          </div>
+
+          <!-- Información de la Extensión -->
+          <div class="space-y-2">
+            <!-- Número de Extensión -->
+            <div class="flex items-center gap-2">
+              <span class="material-icons-outlined text-[#2E86AB] text-base">dialpad</span>
+              <span class="text-2xl font-bold text-gray-800">{{ ext.extension }}</span>
+            </div>
+
+            <!-- Nombre -->
+            <div class="flex items-center gap-2">
+              <span class="material-icons-outlined text-gray-400 text-sm">person</span>
+              <span class="text-sm text-gray-600 font-medium truncate">
+                {{ ext.name || 'Sin nombre' }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Divisor -->
+          <div class="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent my-3"></div>
+
+          <!-- Acciones -->
+          <div class="flex gap-2">
+            <button class="flex-1 ext-action-btn">
+              <span class="material-icons-outlined text-base">call</span>
+              Llamar
+            </button>
+            <button class="ext-action-icon-btn" title="Más opciones">
+              <span class="material-icons-outlined text-base">more_vert</span>
+            </button>
+          </div>
         </div>
       }
+    </div>
+
+    <!-- Información adicional -->
+    <div class="text-center text-sm text-gray-500 mt-6">
+      <p>Mostrando {{ extensions.length }} extensiones en total</p>
     </div>
   }
 </div>

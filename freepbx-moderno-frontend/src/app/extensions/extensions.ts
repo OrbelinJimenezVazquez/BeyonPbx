@@ -15,6 +15,8 @@ import { ConfirmationService } from '../core/confirmation.service';
 export class ExtensionsComponent implements OnInit {
   extensions: any[] = [];
   loading = false;
+onlineCount: any;
+offlineCount: any;
 
   loadExtensions() {
   this.api.getExtensions().subscribe({

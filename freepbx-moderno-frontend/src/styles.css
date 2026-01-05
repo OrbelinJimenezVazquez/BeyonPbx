@@ -27,16 +27,19 @@
   --sidebar-bg: var(--color-dark-teal);
   --sidebar-text: white;
 
-  /* ⭐ NUEVAS VARIABLES PARA MEJORAS VISUALES */
   --gradient-ocean: linear-gradient(135deg, #2E86AB 0%, #56cfe1 100%);
   --gradient-teal: linear-gradient(135deg, #043742 0%, #2E86AB 100%);
   --gradient-card-bg: linear-gradient(135deg, rgba(46, 134, 171, 0.05) 0%, rgba(86, 207, 225, 0.05) 100%);
   --shadow-card: 0 8px 24px rgba(46, 134, 171, 0.12);
   --shadow-card-hover: 0 12px 32px rgba(46, 134, 171, 0.18);
   --border-subtle: rgba(46, 134, 171, 0.1);
+
+  --sidebar-width: 180px;
+  --sidebar-hover: rgba(46, 134, 171, 0.15);
+  --header-height: 65px;
+  --gradient-ocean: linear-gradient(135deg, #2E86AB 0%, #56cfe1 100%);
 }
 
-/* Agregar al final de src/styles.css */
 
 /* ============================================
    DARK MODE - IMPLEMENTACIÓN COMPLETA
@@ -348,7 +351,7 @@ body {
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
-  border-radius: 12px;
+  border-radius: 50px;
   font-weight: 600;
   letter-spacing: 0.3px;
   box-shadow: 0 4px 12px rgba(46, 134, 171, 0.25);
@@ -550,8 +553,6 @@ html {
   }
 }
 
-
-
 /* ============================================
    MICRO-INTERACCIONES Y ANIMACIONES EXTRA
    ============================================ */
@@ -566,11 +567,11 @@ html {
   }
 }
 
-.material-icons-outlined {
+.material-icons-outlined, .material-icons-round, .material-icons {
   transition: transform 0.3s ease;
 }
 
-button:hover .material-icons-outlined {
+button:hover .material-icons-outlined, button:hover .material-icons-round, button:hover .material-icons {
   animation: bounce-soft 0.6s ease;
 }
 

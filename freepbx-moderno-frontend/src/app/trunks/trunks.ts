@@ -13,6 +13,9 @@ import { ConfirmationService } from '../core/confirmation.service';
   styleUrls: ['./trunks.css']
 })
 export class TrunksComponent implements OnInit {
+getTechnologies() {
+throw new Error('Method not implemented.');
+}
   trunks: any[] = [];
   loading = false;
 
