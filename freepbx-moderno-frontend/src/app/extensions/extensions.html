@@ -4,14 +4,22 @@
   <!-- Header -->
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
     <div class="flex items-center gap-4">
-      <div class="w-12 h-12 rounded-2xl bg-[#2E86AB] flex items-center justify-center shadow-lg" style="background: linear-gradient(135deg, #2E86AB 0%, #56cfe1 100%);">
-        <span class="material-icons-outlined text-white text-2xl">phone</span>
+      <div class="w-12 h-12 rounded-[50px] bg-[#2E86AB] flex items-center justify-center shadow-lg">
+        <span class="material-icons-outlined text-white text-2xl">cable</span>
       </div>
       <div>
         <h1 class="text-3xl font-bold text-gray-800">Extensiones</h1>
         <p class="text-sm text-gray-500 mt-1">Gestión de extensiones telefónicas</p>
       </div>
     </div>
+    <div class="flex items-center gap-3">
+    <button 
+      (click)="exportExtensions()" 
+      [disabled]="loading"
+      class="export-btn-secondary">
+      <span class="material-icons-outlined text-lg">download</span>
+      Exportar
+    </button>
     <button 
       (click)="loadExtensions()" 
       [disabled]="loading"
@@ -19,6 +27,7 @@
       <span class="material-icons-outlined text-lg">refresh</span>
       {{ loading ? 'Cargando...' : 'Actualizar' }}
     </button>
+  </div>
   </div>
 
   <!-- Estado de Carga -->

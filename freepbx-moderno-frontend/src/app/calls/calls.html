@@ -3,8 +3,8 @@
   <!-- Header -->
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
     <div class="flex items-center gap-4">
-      <div class="w-12 h-12 rounded-2xl bg-[#2E86AB] flex items-center justify-center shadow-lg" style="background: linear-gradient(135deg, #2E86AB 0%, #56cfe1 100%);">
-        <span class="material-icons-outlined text-white text-2xl">call</span>
+      <div class="w-12 h-12 rounded-[50px] bg-[#2E86AB] flex items-center justify-center shadow-lg">
+        <span class="material-icons text-white text-2xl">call</span>
       </div>
       <div>
         <h1 class="text-3xl font-bold text-gray-800">Llamadas Detalladas</h1>
@@ -197,9 +197,6 @@
                 <!-- Número -->
                 <td>
                   <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#2E86AB] to-[#56cfe1] flex items-center justify-center">
-                      <span class="material-icons-outlined text-white text-sm">phone_in_talk</span>
-                    </div>
                     <span class="font-medium text-gray-800">{{ call.numero }}</span>
                   </div>
                 </td>
@@ -208,12 +205,12 @@
                 <td>
                   @if (call.cola === 'Sí') {
                     <span class="tag-queue">
-                      <span class="material-icons-outlined text-xs mr-1">queue_music</span>
+                      <span class="material-icons text-xs mr-1">queue_music</span>
                       Sí
                     </span>
                   } @else {
                     <span class="tag-no-queue">
-                      <span class="material-icons-outlined text-xs mr-1">remove</span>
+                      <span class="material-icons text-xs mr-1">remove</span>
                       No
                     </span>
                   }

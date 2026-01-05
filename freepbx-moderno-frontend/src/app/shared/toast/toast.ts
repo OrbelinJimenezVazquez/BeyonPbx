@@ -4,6 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ToastService, Toast } from '../../core/toast.service';
 import { Observable } from 'rxjs';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-toast',
@@ -32,7 +33,18 @@ import { Observable } from 'rxjs';
         </div>
       }
     </div>
-  `,// Estilos CSS para el componente de toast
+  `,
+  animations: [
+    trigger('slideIn', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateX(100%)' }),
+        animate('300ms ease-out', style({ opacity: 1, transform: 'translateX(0)' }))
+      ]),
+      transition(':leave', [
+        animate('300ms ease-in', style({ opacity: 0, transform: 'translateX(100%)' }))
+      ])
+    ])
+  ],
   styles: [`
     .toast-container {
       position: fixed;
@@ -56,7 +68,6 @@ import { Observable } from 'rxjs';
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
       background-color: white;
       border-left: 4px solid;
-      animation: slideInRight 0.3s ease-out;
       cursor: pointer;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       pointer-events: auto;
@@ -117,17 +128,6 @@ import { Observable } from 'rxjs';
 
     .toast-close:hover {
       color: #374151;
-    }
-
-    @keyframes slideInRight {
-      from {
-        opacity: 0;
-        transform: translateX(100%);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
     }
 
     @media (max-width: 640px) {

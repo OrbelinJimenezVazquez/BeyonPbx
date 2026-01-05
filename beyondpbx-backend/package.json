@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@angular/animations": "^21.0.6",
     "chart.js": "^4.5.1"
   }
 }

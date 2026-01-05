@@ -3,8 +3,9 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ApiService } from '../core/api.service';
 
 //Estos imports son para las notificiaciones y modales
-import { ToastService } from '../core/toast.service';
-import { ConfirmationService } from '../core/confirmation.service';
+import { ToastService } from '../core/toast.service'; // Notificaciones
+import { ConfirmationService } from '../core/confirmation.service'; //Modales
+import { ExportService } from '../core/export.service'; //Exportar datos
 
 @Component({
   selector: 'app-trunks',
@@ -24,6 +25,7 @@ throw new Error('Method not implemented.');
   private cdr: ChangeDetectorRef,
   private toast: ToastService, // Notificaciones
   private confirmation: ConfirmationService, //Modales
+  private exportService: ExportService //Exportar datos
 ) {}
 
   loadTrunks() {
@@ -51,5 +53,27 @@ throw new Error('Method not implemented.');
   ngOnInit(): void {
     this.loadTrunks(); // Cargar troncales al iniciar el componente
   }
+
+// Agregar método:
+exportTrunks() {
+  if (this.trunks.length === 0) {
+    alert('No hay troncales para exportar');
+    return;
+  }
+
+  const headers = ['Canal ID', 'Nombre', 'Tecnología'];
+  
+  const data = this.trunks.map(trunk => [
+    trunk.channelid,
+    trunk.name,
+    trunk.tech
+  ]);
+
+  this.exportService.exportToCSV(
+    data,
+    `troncales_${new Date().toISOString().split('T')[0]}`,
+    headers
+  );
+}
 
 }

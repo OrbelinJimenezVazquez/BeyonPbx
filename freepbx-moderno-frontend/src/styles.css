@@ -1202,3 +1202,167 @@ button:hover .material-icons-outlined, button:hover .material-icons-round, butto
     gap: 0.75rem;
   }
 }
+
+
+
+/* ============================================
+   BOTONES DE EXPORT GLOBALES
+   ============================================ */
+
+/* Botón Export Secundario */
+.export-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 50px;
+  background: white;
+  color: #10b981;
+  border: 2px solid #10b981;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.export-btn-secondary:hover:not(:disabled) {
+  background: #10b981;
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  transform: translateY(-2px);
+}
+
+.export-btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Export Dropdown */
+.export-dropdown {
+  position: relative;
+}
+
+.export-dropdown-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 12px;
+  background: white;
+  color: #10b981;
+  border: 2px solid #10b981;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.export-dropdown-btn:hover {
+  background: #10b981;
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  transform: translateY(-2px);
+}
+
+.export-menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  min-width: 200px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  overflow: hidden;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.export-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.875rem 1.25rem;
+  background: white;
+  border: none;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.export-menu-item:hover {
+  background: #f3f4f6;
+  color: #10b981;
+}
+
+.export-menu-item:not(:last-child) {
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.export-menu-item .material-icons-outlined {
+  color: #10b981;
+}
+
+/* Dark mode para export buttons */
+[data-theme="dark"] .export-btn-secondary,
+[data-theme="dark"] .export-dropdown-btn {
+  background: #1e293b;
+  border-color: #10b981;
+  color: #10b981;
+}
+
+[data-theme="dark"] .export-btn-secondary:hover,
+[data-theme="dark"] .export-dropdown-btn:hover {
+  background: #10b981;
+  color: white;
+}
+
+[data-theme="dark"] .export-menu {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+[data-theme="dark"] .export-menu-item {
+  background: #1e293b;
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .export-menu-item:hover {
+  background: #334155;
+  color: #10b981;
+}
+
+[data-theme="dark"] .export-menu-item:not(:last-child) {
+  border-bottom-color: #334155;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .export-dropdown-btn,
+  .export-btn-secondary {
+    padding: 0.625rem 1rem;
+    font-size: 0.8125rem;
+  }
+  
+  .export-menu {
+    min-width: 160px;
+  }
+}
