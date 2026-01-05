@@ -4,7 +4,7 @@
    SIDEBAR MODERNA
    ============================================ */
 .sidebar-modern {
-  width: 80px;
+  width: 70px;
   background: var(--sidebar-bg);
   display: flex;
   flex-direction: column;
