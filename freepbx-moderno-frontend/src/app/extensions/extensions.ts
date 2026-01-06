@@ -1,6 +1,8 @@
 // src/app/extensions/extensions.component.ts
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ApiService } from '../core/api.service';
+import { FormsModule } from '@angular/forms';
+
 
 //Estos imports son para las notificiaciones y modales
 import { ToastService } from '../core/toast.service';
@@ -10,6 +12,7 @@ import { ExportService } from '../core/export.service'; // Importar el servicio 
 @Component({
   selector: 'app-extensions',
   standalone: true,
+  imports: [FormsModule],
   templateUrl: './extensions.html',
   styleUrls: ['./extensions.css']
 })

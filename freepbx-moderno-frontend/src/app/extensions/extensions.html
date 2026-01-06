@@ -1,5 +1,3 @@
-
-<!-- src/app/extensions/extensions.html -->
 <div class="p-6 space-y-6">
   <!-- Header -->
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
@@ -13,21 +11,21 @@
       </div>
     </div>
     <div class="flex items-center gap-3">
-    <button 
-      (click)="exportExtensions()" 
-      [disabled]="loading"
-      class="export-btn-secondary">
-      <span class="material-icons-outlined text-lg">download</span>
-      Exportar
-    </button>
-    <button 
-      (click)="loadExtensions()" 
-      [disabled]="loading"
-      class="btn-primary">
-      <span class="material-icons-outlined text-lg">refresh</span>
-      {{ loading ? 'Cargando...' : 'Actualizar' }}
-    </button>
-  </div>
+      <button 
+        (click)="exportExtensions()" 
+        [disabled]="loading"
+        class="export-btn-secondary">
+        <span class="material-icons-outlined text-lg">download</span>
+        Exportar
+      </button>
+      <button 
+        (click)="loadExtensions()" 
+        [disabled]="loading"
+        class="btn-primary">
+        <span class="material-icons-outlined text-lg">refresh</span>
+        {{ loading ? 'Cargando...' : 'Actualizar' }}
+      </button>
+    </div>
   </div>
 
   <!-- Estado de Carga -->
@@ -55,9 +53,8 @@
     </div>
   } 
   
-  <!-- Grid de Extensiones -->
+  <!-- Stats Summary -->
   @else {
-    <!-- Stats Summary -->
     <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-lg mb-6">
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="flex items-center gap-3">
@@ -96,71 +93,133 @@
       </div>
     </div>
 
-    <!-- Grid de Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-      @for (ext of extensions; track ext.extension + '_' + ext.name) {
-        <div class="extension-card-modern fade-in-up">
-          <!-- Header de la Card -->
-          <div class="flex items-start justify-between mb-3">
-            <!-- Avatar con inicial -->
-            <div class="relative">
-              <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#2E86AB] to-[#56cfe1] flex items-center justify-center text-white text-xl font-bold shadow-lg">
-                {{ (ext.name || 'U').charAt(0).toUpperCase() }}
-              </div>
-              <!-- Indicador de estado -->
-              <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white shadow-md"
-                   [class.bg-green-500]="ext.status === 'online'"
-                   [class.bg-gray-400]="ext.status === 'offline'"
-                   [class.animate-pulse]="ext.status === 'online'">
-              </div>
-            </div>
+    <!-- ✅ TABLA DE EXTENSIONES - Reemplazo del grid -->
+    <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-lg">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <input type="checkbox" class="form-checkbox h-4 w-4 text-[#2E86AB] rounded">
+              </th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Extensión</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+              <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">CW</th>
+              <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">DND</th>
+              <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">FM/FM</th>
+              <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">CF</th>
+              <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">CFB</th>
+              <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">CFU</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+              <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            @for (ext of extensions; track ext.extension) {
+              <tr class="hover:bg-gray-50 transition-colors">
+                <!-- Checkbox -->
+                <td class="px-4 py-3 whitespace-nowrap">
+                  <input type="checkbox" class="form-checkbox h-4 w-4 text-[#2E86AB] rounded">
+                </td>
 
-            <!-- Badge de Estado -->
-            @if (ext.status === 'online') {
-              <span class="status-badge-online">
-                <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
-                En línea
-              </span>
-            } @else {
-              <span class="status-badge-offline">
-                <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
-                Offline
-              </span>
+                <!-- Extensión + Avatar -->
+                <td class="px-4 py-3 whitespace-nowrap">
+                  <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#2E86AB] to-[#56cfe1] flex items-center justify-center text-white text-sm font-bold">
+                      {{ (ext.name || 'U').charAt(0).toUpperCase() }}
+                    </div>
+                    <span class="font-bold text-gray-800">{{ ext.extension }}</span>
+                  </div>
+                </td>
+
+                <!-- Nombre -->
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                  {{ ext.name || 'Sin nombre' }}
+                </td>
+
+                <!-- CW -->
+                <td class="px-4 py-3 whitespace-nowrap text-center">
+                  @if (ext.cw) {
+                    <span class="material-icons-outlined text-green-600 text-sm">check_box</span>
+                  } @else {
+                    <span class="material-icons-outlined text-gray-300 text-sm">check_box_outline_blank</span>
+                  }
+                </td>
+
+                <!-- DND -->
+                <td class="px-4 py-3 whitespace-nowrap text-center">
+                  @if (ext.dnd) {
+                    <span class="material-icons-outlined text-red-500 text-sm">check_box</span>
+                  } @else {
+                    <span class="material-icons-outlined text-gray-300 text-sm">check_box_outline_blank</span>
+                  }
+                </td>
+
+                <!-- FM/FM -->
+                <td class="px-4 py-3 whitespace-nowrap text-center">
+                  @if (ext.fmfm) {
+                    <span class="material-icons-outlined text-blue-600 text-sm">check_box</span>
+                  } @else {
+                    <span class="material-icons-outlined text-gray-300 text-sm">check_box_outline_blank</span>
+                  }
+                </td>
+
+                <!-- CF / CFB / CFU -->
+                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-700">
+                    @if (ext.fmfm) {
+                    <span class="material-icons-outlined text-blue-600 text-sm">check_box</span>
+                  } @else {
+                    <span class="material-icons-outlined text-gray-300 text-sm">check_box_outline_blank</span>
+                  }
+                </td>
+                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-700">
+                    @if (ext.fmfm) {
+                    <span class="material-icons-outlined text-blue-600 text-sm">check_box</span>
+                  } @else {
+                    <span class="material-icons-outlined text-gray-300 text-sm">check_box_outline_blank</span>
+                  }
+                </td>
+                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-700">
+                    @if (ext.fmfm) {
+                    <span class="material-icons-outlined text-blue-600 text-sm">check_box</span>
+                  } @else {
+                    <span class="material-icons-outlined text-gray-300 text-sm">check_box_outline_blank</span>
+                  }
+                </td>
+
+                <!-- Tipo -->
+                <td class="px-4 py-3 whitespace-nowrap">
+                  <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
+                    {{ ext.type || 'SIP' }}
+                  </span>
+                </td>
+
+                <!-- Acciones -->
+                <td class="px-4 py-3 whitespace-nowrap text-right">
+                  <div class="flex justify-end gap-2">
+                    <button class="ext-action-icon-btn w-8 h-8 p-0" title="Editar">
+                      <span class="material-icons-outlined text-sm">edit</span>
+                    </button>
+                    <button class="ext-action-icon-btn w-8 h-8 p-0" title="Eliminar">
+                      <span class="material-icons-outlined text-sm">delete</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
             }
-          </div>
+          </tbody>
+        </table>
+      </div>
 
-          <!-- Información de la Extensión -->
-          <div class="space-y-2">
-            <!-- Número de Extensión -->
-            <div class="flex items-center gap-2">
-              <span class="material-icons-outlined text-[#2E86AB] text-base">dialpad</span>
-              <span class="text-2xl font-bold text-gray-800">{{ ext.extension }}</span>
-            </div>
-
-            <!-- Nombre -->
-            <div class="flex items-center gap-2">
-              <span class="material-icons-outlined text-gray-400 text-sm">person</span>
-              <span class="text-sm text-gray-600 font-medium truncate">
-                {{ ext.name || 'Sin nombre' }}
-              </span>
-            </div>
-          </div>
-
-          <!-- Divisor -->
-          <div class="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent my-3"></div>
-
-          <!-- Acciones -->
-          <div class="flex gap-2">
-            <button class="flex-1 ext-action-btn">
-              <span class="material-icons-outlined text-base">call</span>
-              Llamar
-            </button>
-            <button class="ext-action-icon-btn" title="Más opciones">
-              <span class="material-icons-outlined text-base">more_vert</span>
-            </button>
-          </div>
+      <!-- Paginación básica (estática para prueba visual) -->
+      <div class="px-4 py-3 bg-gray-50 border-t border-gray-200 flex items-center justify-between text-sm text-gray-700">
+        <span>Mostrando 1 a {{ extensions.length }} de {{ extensions.length }} extensiones</span>
+        <div class="flex space-x-1">
+          <button class="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-100">Anterior</button>
+          <button class="px-3 py-1 bg-[#2E86AB] text-white rounded-md">1</button>
+          <button class="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-100">Siguiente</button>
         </div>
-      }
+      </div>
     </div>
 
     <!-- Información adicional -->
