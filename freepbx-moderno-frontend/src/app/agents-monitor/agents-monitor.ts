@@ -97,12 +97,13 @@ export class AgentsMonitorComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   /**
-   * Actualiza contadores de duración en tiempo real
+   * Actualiza contadores de duración en tiempo real (solo para agentes en llamada)
    */
   updateCounters(): void {
     const now = new Date();
     this.agents = this.agents.map(agent => {
-      if (agent.lastActivity) {
+      // Solo actualizar duración si está en llamada
+      if (agent.status === 'busy' && agent.lastActivity) {
         const lastActivityDate = new Date(agent.lastActivity);
         const elapsed = Math.floor((now.getTime() - lastActivityDate.getTime()) / 1000);
         return {

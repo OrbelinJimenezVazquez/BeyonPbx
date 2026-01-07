@@ -78,6 +78,8 @@ def get_agents_realtime_status(db: Session = Depends(get_db)):
                     ql.data1,
                     ql.data2,
                     ql.data3,
+                    ql.data4,
+                    ql.data5,
                     ql.time,
                     TIMESTAMPDIFF(SECOND, ql.time, NOW()) as duration_seconds
                 FROM asteriskcdrdb.queuelog ql
@@ -96,11 +98,13 @@ def get_agents_realtime_status(db: Session = Depends(get_db)):
                 'event': row[1],
                 'queuename': row[2],
                 'callid': row[3],
-                'caller_id': row[4],
-                'wait_time': row[5],
-                'talk_time': row[6],
-                'time': row[7],
-                'duration_seconds': row[8]
+                'data1': row[4],
+                'data2': row[5],
+                'data3': row[6],
+                'data4': row[7],
+                'caller_id': row[8] or row[3],  # data5 suele tener el CallerID, sino usar callid
+                'time': row[9],
+                'duration_seconds': row[10]
             } for row in events_result}
         
         # Obtener estadísticas de llamadas del día
@@ -141,7 +145,9 @@ def get_agents_realtime_status(db: Session = Depends(get_db)):
             
             # Determinar estado del agente y duración
             time_in_state = 0
-            duration_display = "00:00:00"
+            duration_display = ""
+            caller_id = ""
+            call_id = ""
             
             # Verificar si está en llamada activa (evento CONNECT reciente sin COMPLETE después)
             is_in_active_call = False
@@ -152,6 +158,8 @@ def get_agents_realtime_status(db: Session = Depends(get_db)):
                     is_in_active_call = True
                     time_in_state = call_duration
                     duration_display = format_duration(call_duration)
+                    caller_id = call_event.get('caller_id', '')
+                    call_id = call_event.get('callid', '')
             
             if is_in_active_call or incall == 1:
                 status = 'busy'
@@ -159,21 +167,23 @@ def get_agents_realtime_status(db: Session = Depends(get_db)):
                 if not is_in_active_call and call_event:
                     time_in_state = call_event.get('duration_seconds', 0)
                     duration_display = format_duration(time_in_state)
+                    caller_id = call_event.get('caller_id', '')
+                    call_id = call_event.get('callid', '')
             elif pause_state and 'START PAUSE' in pause_state:
                 status = 'paused'
                 status_text = 'En Pausa'
-                time_in_state = pause_duration
-                duration_display = format_duration(pause_duration)
+                time_in_state = 0
+                duration_display = ""
             elif defer_pause:
                 status = 'paused'
                 status_text = 'Pausa Diferida'
                 time_in_state = 0
-                duration_display = "00:00:00"
+                duration_display = ""
             else:
                 status = 'available'
                 status_text = 'Disponible'
-                time_in_state = session_duration
-                duration_display = format_duration(session_duration)
+                time_in_state = 0
+                duration_display = ""
             
             # Obtener nombre de cola principal (primera cola de la lista)
             queue_list = queues_str.split(',')
@@ -200,8 +210,8 @@ def get_agents_realtime_status(db: Session = Depends(get_db)):
                 'paused': status == 'paused',
                 'pauseReason': pause_reason or defer_pause or '',
                 'inCall': status == 'busy',
-                'uniqueid': call_event.get('callid', ''),
-                'callerId': call_event.get('caller_id', ''),
+                'uniqueid': call_id,
+                'callerId': caller_id,
                 'lastCallTime': call_info['last_call'].isoformat() if call_info['last_call'] else None,
                 'lastCallFormatted': format_last_call_time(call_info['last_call']) if call_info['last_call'] else 'Sin datos',
                 'callsToday': call_info['count'],
