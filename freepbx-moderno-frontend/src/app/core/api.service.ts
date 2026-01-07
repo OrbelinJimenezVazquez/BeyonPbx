@@ -140,11 +140,11 @@ export class ApiService {
     return this.http.post<any>(`${this.baseUrl}/queues`, queue);
   }
 
-  updateQueue(id: number, queue: any): Observable<any> {
+  updateQueue(id: string, queue: any): Observable<any> {
     return this.http.put<any>(`${this.baseUrl}/queues/${id}`, queue);
   }
 
-  deleteQueue(id: number): Observable<any> {
+  deleteQueue(id: string): Observable<any> {
     return this.http.delete<any>(`${this.baseUrl}/queues/${id}`);
   }
 }

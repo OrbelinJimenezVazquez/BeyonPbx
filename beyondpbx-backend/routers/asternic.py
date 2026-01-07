@@ -370,81 +370,81 @@ def get_agents_realtime_status(db: Session = Depends(get_db)):
 def get_agent_details(agent_extension: str, db: Session = Depends(get_db)):
     """
     Obtiene detalles completos de un agente específico
+    Busca por nombre del agente desde agent_activity
     """
-    # Información básica del agente desde qstats.agentnames
-    agent_info = db.query(AgentName).filter(AgentName.agent == agent_extension).first()
-    
-    if not agent_info:
-        raise HTTPException(status_code=404, detail="Agente no encontrado")
-        raise HTTPException(status_code=404, detail="Agente no encontrado")
-    
-    # Última actividad
-    latest_activity = (
-        db.query(AgentActivity)
-        .filter(AgentActivity.agent == agent_extension)
-        .order_by(desc(AgentActivity.datetime))
-        .first()
-    )
-    
-    # Estado de pausa actual
-    pause_status = (
-        db.query(AgentActivityPause)
-        .filter(AgentActivityPause.agent == agent_extension)
-        .first()
-    )
-    
-    # Sesión actual
-    current_session = (
-        db.query(AgentActivitySession)
-        .filter(AgentActivitySession.agent == agent_extension)
-        .first()
-    )
-    
-    # Estadísticas del día
-    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-    
-    daily_stats = text("""
-        SELECT 
-            COUNT(CASE WHEN event LIKE '%CONNECT%' THEN 1 END) as calls_answered,
-            SUM(CASE WHEN event LIKE '%COMPLETE%' THEN lastedforseconds END) as total_talk_time,
-            AVG(CASE WHEN event LIKE '%COMPLETE%' THEN lastedforseconds END) as avg_talk_time,
-            COUNT(CASE WHEN event LIKE '%PAUSE%' THEN 1 END) as pause_count,
-            SUM(CASE WHEN event LIKE '%PAUSE%' THEN lastedforseconds END) as total_pause_time
-        FROM qstats.agent_activity
-        WHERE agent = :agent
-        AND datetime >= :today
-    """)
-    
-    stats = db.execute(daily_stats, {"agent": agent_extension, "today": today}).fetchone()
-    
-    return {
-        "extension": agent_extension,
-        "name": agent_info.name,
-        "currentActivity": {
-            "event": latest_activity.event if latest_activity else None,
-            "queue": latest_activity.queue if latest_activity else None,
-            "datetime": latest_activity.datetime.isoformat() if latest_activity else None,
-            "duration": latest_activity.lastedforseconds if latest_activity else 0
-        },
-        "pauseStatus": {
-            "isPaused": pause_status.state == 'PAUSED' if pause_status else False,
-            "reason": pause_status.data if pause_status and pause_status.state == 'PAUSED' else None,
-            "since": pause_status.datetime.isoformat() if pause_status else None
-        },
-        "session": {
-            "isLoggedIn": current_session.state == 'LOGGEDIN' if current_session else False,
-            "inCall": bool(current_session.incall) if current_session else False,
-            "queue": current_session.queue if current_session else None,
-            "sessionCount": current_session.sessioncount if current_session else 0
-        },
-        "dailyStats": {
-            "callsAnswered": stats[0] or 0,
-            "totalTalkTime": stats[1] or 0,
-            "avgTalkTime": round(stats[2] or 0, 1),
-            "pauseCount": stats[3] or 0,
-            "totalPauseTime": stats[4] or 0
+    try:
+        # Obtener última actividad del agente (para validar que existe y obtener datos básicos)
+        latest_activity = (
+            db.query(AgentActivity)
+            .filter(AgentActivity.agent == agent_extension)
+            .order_by(desc(AgentActivity.datetime))
+            .first()
+        )
+        
+        if not latest_activity:
+            raise HTTPException(status_code=404, detail=f"Agente '{agent_extension}' no encontrado")
+        
+        # Estado de pausa actual
+        pause_status = (
+            db.query(AgentActivityPause)
+            .filter(AgentActivityPause.agent == agent_extension)
+            .first()
+        )
+        
+        # Sesión actual
+        current_session = (
+            db.query(AgentActivitySession)
+            .filter(AgentActivitySession.agent == agent_extension)
+            .first()
+        )
+        
+        # Estadísticas del día
+        today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        
+        daily_stats = text("""
+            SELECT 
+                COUNT(CASE WHEN event LIKE '%CONNECT%' THEN 1 END) as calls_answered,
+                SUM(CASE WHEN event LIKE '%COMPLETE%' THEN lastedforseconds END) as total_talk_time,
+                AVG(CASE WHEN event LIKE '%COMPLETE%' THEN lastedforseconds END) as avg_talk_time,
+                COUNT(CASE WHEN event LIKE '%PAUSE%' THEN 1 END) as pause_count,
+                SUM(CASE WHEN event LIKE '%PAUSE%' THEN lastedforseconds END) as total_pause_time
+            FROM qstats.agent_activity
+            WHERE agent = :agent
+            AND datetime >= :today
+        """)
+        
+        stats = db.execute(daily_stats, {"agent": agent_extension, "today": today}).fetchone()
+        
+        return {
+            "extension": agent_extension,
+            "name": agent_extension,  # Usamos el nombre del agente como está en la BD
+            "currentActivity": {
+                "event": latest_activity.event if latest_activity else None,
+                "queue": latest_activity.queue if latest_activity else None,
+                "datetime": latest_activity.datetime.isoformat() if latest_activity else None,
+                "duration": latest_activity.lastedforseconds if latest_activity else 0
+            },
+            "pauseStatus": {
+                "isPaused": pause_status.state == 'PAUSED' if pause_status else False,
+                "reason": pause_status.data if pause_status and pause_status.state == 'PAUSED' else None,
+                "since": pause_status.datetime.isoformat() if pause_status else None
+            },
+            "session": {
+                "isLoggedIn": current_session.state == 'LOGGEDIN' if current_session else False,
+                "inCall": bool(current_session.incall) if current_session else False,
+                "queue": current_session.queue if current_session else None,
+                "sessionCount": current_session.sessioncount if current_session else 0
+            },
+            "dailyStats": {
+                "callsAnswered": stats[0] or 0,
+                "totalTalkTime": stats[1] or 0,
+                "avgTalkTime": round(stats[2] or 0, 1),
+                "pauseCount": stats[3] or 0,
+                "totalPauseTime": stats[4] or 0
+            }
         }
-    }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al obtener detalles del agente: {str(e)}")
 
 @router.get("/agents/sessions")
 def get_agents_sessions(db: Session = Depends(get_db)):

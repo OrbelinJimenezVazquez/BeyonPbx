@@ -209,10 +209,8 @@ class AgentName(Base):
     __tablename__ = "agentnames"
     __table_args__ = {'schema': 'qstats'}
     
-    id = Column(Integer, primary_key=True)
-    qagent = Column(Integer, index=True)
-    agent = Column(String(250), index=True)
-    name = Column(String(250))
+    device = Column(String(50), primary_key=True)
+    agent = Column(String(255), nullable=True)
 
 # Modelo para Pauses (qstats) - Catálogo de tipos de pausa
 class Pause(Base):
@@ -228,7 +226,8 @@ class QueueName(Base):
     __tablename__ = "queuenames"
     __table_args__ = {'schema': 'qstats'}
     
-    id = Column(Integer, primary_key=True)
-    qname = Column(Integer, index=True)
-    queue = Column(String(250), index=True)
-    descr = Column(String(250))
+    device = Column(String(50), primary_key=True)  # PK según la estructura
+    queue = Column(String(255), nullable=True)  # Permite NULL según tu estructura
+    
+    def __repr__(self):
+        return f"<QueueName(device={self.device}, queue={self.queue})>"

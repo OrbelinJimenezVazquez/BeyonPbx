@@ -7,10 +7,8 @@ import { ToastService } from '../core/toast.service';
 import { ConfirmationService } from '../core/confirmation.service';
 
 interface Queue {
-  id?: number;
-  qname: number;
+  device: string;
   queue: string;
-  descr: string;
 }
 
 @Component({
@@ -31,9 +29,8 @@ export class QueuesComponent implements OnInit {
   modalTitle = '';
   editingQueue: Queue | null = null;
   formQueue: Queue = {
-    qname: 0,
-    queue: '',
-    descr: ''
+    device: '',
+    queue: ''
   };
 
   constructor(
@@ -52,17 +49,58 @@ export class QueuesComponent implements OnInit {
    */
   loadQueues(): void {
     this.loading = true;
+    console.log('🔄 Iniciando carga de colas...');
+    
     this.api.getQueues().subscribe({
       next: (data: any) => {
-        this.queues = data.queues || [];
-        this.filteredQueues = [...this.queues];
+        console.log('✅ Datos recibidos del backend:', data);
+        console.log('✅ Tipo de datos:', typeof data, 'Es array?', Array.isArray(data));
+        
+        // Manejar diferentes formatos de respuesta
+        if (data && Array.isArray(data.queues)) {
+          this.queues = data.queues;
+          console.log('📋 Colas procesadas (objeto con queues):', this.queues.length);
+        } else if (data && Array.isArray(data)) {
+          // Por si el backend devuelve directamente el array
+          this.queues = data;
+          console.log('📋 Colas procesadas (array directo):', this.queues.length);
+        } else {
+          console.warn('⚠️ Formato de respuesta no esperado:', data);
+          this.queues = [];
+        }
+        
+        // IMPORTANTE: Crear una copia nueva del array para forzar detección de cambios
+        this.filteredQueues = JSON.parse(JSON.stringify(this.queues));
+        
+        console.log('🔍 filteredQueues tiene', this.filteredQueues.length, 'elementos');
+        console.log('🔍 Primer elemento:', this.filteredQueues[0]);
+        
         this.loading = false;
-        this.cdr.detectChanges();
+        
+        // Forzar múltiples ciclos de detección de cambios
+        setTimeout(() => {
+          this.cdr.markForCheck();
+          this.cdr.detectChanges();
+        }, 0);
+        
+        if (this.queues.length > 0) {
+          this.toast.success(`${this.queues.length} colas cargadas correctamente`);
+        } else {
+          this.toast.info('No hay colas registradas en el sistema');
+        }
       },
       error: (err) => {
-        console.error('Error cargando colas:', err);
-        this.toast.error('Error al cargar colas');
+        console.error('❌ Error cargando colas:', err);
+        console.error('Detalles del error:', {
+          status: err.status,
+          statusText: err.statusText,
+          message: err.message,
+          error: err.error
+        });
+        
+        this.toast.error('Error al cargar colas. Revisa la consola para más detalles.');
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -79,9 +117,10 @@ export class QueuesComponent implements OnInit {
     const term = this.searchTerm.toLowerCase();
     this.filteredQueues = this.queues.filter(q =>
       q.queue.toLowerCase().includes(term) ||
-      q.descr.toLowerCase().includes(term) ||
-      q.qname.toString().includes(term)
+      q.device.toString().includes(term)
     );
+    
+    console.log(`🔍 Búsqueda: "${term}" - Resultados: ${this.filteredQueues.length}`);
   }
 
   /**
@@ -91,9 +130,8 @@ export class QueuesComponent implements OnInit {
     this.modalTitle = 'Crear Nueva Cola';
     this.editingQueue = null;
     this.formQueue = {
-      qname: this.getNextQname(),
-      queue: '',
-      descr: ''
+      device: '',
+      queue: ''
     };
     this.showModal = true;
   }
@@ -102,6 +140,7 @@ export class QueuesComponent implements OnInit {
    * Abre modal para editar cola existente
    */
   openEditModal(queue: Queue): void {
+    console.log('✏️ Editando cola:', queue);
     this.modalTitle = 'Editar Cola';
     this.editingQueue = queue;
     this.formQueue = { ...queue };
@@ -115,9 +154,8 @@ export class QueuesComponent implements OnInit {
     this.showModal = false;
     this.editingQueue = null;
     this.formQueue = {
-      qname: 0,
-      queue: '',
-      descr: ''
+      device: '',
+      queue: ''
     };
   }
 
@@ -130,6 +168,8 @@ export class QueuesComponent implements OnInit {
       return;
     }
 
+    console.log('💾 Guardando cola:', this.formQueue);
+
     if (this.editingQueue) {
       this.updateQueue();
     } else {
@@ -141,15 +181,19 @@ export class QueuesComponent implements OnInit {
    * Crea una nueva cola
    */
   private createQueue(): void {
+    console.log('➕ Creando nueva cola:', this.formQueue);
+    
     this.api.createQueue(this.formQueue).subscribe({
-      next: () => {
+      next: (response) => {
+        console.log('✅ Cola creada:', response);
         this.toast.success('Cola creada exitosamente');
         this.loadQueues();
         this.closeModal();
       },
       error: (err) => {
-        console.error('Error creando cola:', err);
-        this.toast.error('Error al crear la cola');
+        console.error('❌ Error creando cola:', err);
+        const errorMsg = err.error?.detail || 'Error al crear la cola';
+        this.toast.error(errorMsg);
       }
     });
   }
@@ -158,17 +202,24 @@ export class QueuesComponent implements OnInit {
    * Actualiza una cola existente
    */
   private updateQueue(): void {
-    if (!this.editingQueue?.id) return;
+    if (!this.editingQueue?.device) {
+      console.error('❌ No hay cola para actualizar');
+      return;
+    }
 
-    this.api.updateQueue(this.editingQueue.id, this.formQueue).subscribe({
-      next: () => {
+    console.log('🔄 Actualizando cola:', this.editingQueue.device, this.formQueue);
+
+    this.api.updateQueue(this.editingQueue.device, this.formQueue).subscribe({
+      next: (response) => {
+        console.log('✅ Cola actualizada:', response);
         this.toast.success('Cola actualizada exitosamente');
         this.loadQueues();
         this.closeModal();
       },
       error: (err) => {
-        console.error('Error actualizando cola:', err);
-        this.toast.error('Error al actualizar la cola');
+        console.error('❌ Error actualizando cola:', err);
+        const errorMsg = err.error?.detail || 'Error al actualizar la cola';
+        this.toast.error(errorMsg);
       }
     });
   }
@@ -177,34 +228,33 @@ export class QueuesComponent implements OnInit {
    * Elimina una cola
    */
   async deleteQueue(queue: Queue): Promise<void> {
+    console.log('🗑️ Intentando eliminar cola:', queue);
+    
     const confirmed = await this.confirmation.confirm({
       title: '¿Estás seguro?',
-      message: `¿Deseas eliminar la cola "${queue.queue}" (${queue.descr})?`,
+      message: `¿Deseas eliminar la cola "${queue.queue}"?`,
       type: 'danger',
       confirmText: 'Eliminar',
       cancelText: 'Cancelar'
     });
 
-    if (confirmed && queue.id) {
-      this.api.deleteQueue(queue.id).subscribe({
-        next: () => {
+    if (confirmed && queue.device) {
+      console.log('✔️ Confirmado - Eliminando cola:', queue.device);
+      
+      this.api.deleteQueue(queue.device).subscribe({
+        next: (response) => {
+          console.log('✅ Cola eliminada:', response);
           this.toast.success('Cola eliminada exitosamente');
           this.loadQueues();
         },
         error: (err) => {
-          console.error('Error eliminando cola:', err);
-          this.toast.error('Error al eliminar la cola');
+          console.error('❌ Error eliminando cola:', err);
+          const errorMsg = err.error?.detail || 'Error al eliminar la cola';
+          this.toast.error(errorMsg);
         }
       });
+    } else {
+      console.log('❌ Eliminación cancelada');
     }
-  }
-
-  /**
-   * Obtiene el siguiente qname disponible
-   */
-  private getNextQname(): number {
-    if (this.queues.length === 0) return 1;
-    const maxQname = Math.max(...this.queues.map(q => q.qname));
-    return maxQname + 1;
   }
 }

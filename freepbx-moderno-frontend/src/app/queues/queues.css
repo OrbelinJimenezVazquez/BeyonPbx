@@ -136,3 +136,88 @@ tbody tr {
     padding: 1rem 1.5rem;
   }
 }
+/* src/app/queues/queues.css */
+
+/* ============================================
+   IMPORTAR ESTILOS DE CALLS (Reutilizar)
+   ============================================ */
+
+/* Tabla moderna */
+.calls-table-modern {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(46, 134, 171, 0.12);
+  border: 1px solid rgba(46, 134, 171, 0.1);
+}
+
+.calls-table-modern table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.calls-table-modern thead {
+  background: linear-gradient(135deg, rgba(46, 134, 171, 0.05) 0%, rgba(86, 207, 225, 0.05) 100%);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.calls-table-modern thead th {
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  color: #2E86AB;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.calls-table-modern tbody .call-row {
+  border-bottom: 1px solid rgba(46, 134, 171, 0.06);
+  transition: all 0.2s ease;
+}
+
+.calls-table-modern tbody .call-row:last-child {
+  border-bottom: none;
+}
+
+.calls-table-modern tbody .call-row:hover {
+  background: linear-gradient(135deg, rgba(46, 134, 171, 0.03) 0%, rgba(86, 207, 225, 0.03) 100%);
+  transform: scale(1.002);
+  box-shadow: 0 2px 8px rgba(46, 134, 171, 0.08);
+}
+
+.calls-table-modern tbody td {
+  padding: 1rem 1.5rem;
+  color: #475569;
+  font-size: 0.875rem;
+  vertical-align: middle;
+}
+
+/* Botón de detalle */
+.btn-detail {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border-radius: 10px;
+  border: 1.5px solid #e5e7eb;
+  background: white;
+  color: #4b5563;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.btn-detail:hover {
+  border-color: #2E86AB;
+  background: rgba(46, 134, 171, 0.05);
+  color: #2E86AB;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(46, 134, 171, 0.15);
+}
+
+/* Estilos de modal reutilizados */
