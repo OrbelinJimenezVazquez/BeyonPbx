@@ -93,7 +93,7 @@
       </div>
     </div>
 
-    <!-- ✅ TABLA DE EXTENSIONES - Reemplazo del grid -->
+    <!-- ✅ TABLA CON PAGINACIÓN -->
     <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-lg">
       <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
@@ -115,14 +115,11 @@
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-            @for (ext of extensions; track ext.extension) {
+            @for (ext of paginatedExtensions; track ext.extension) {
               <tr class="hover:bg-gray-50 transition-colors">
-                <!-- Checkbox -->
                 <td class="px-4 py-3 whitespace-nowrap">
                   <input type="checkbox" class="form-checkbox h-4 w-4 text-[#2E86AB] rounded">
                 </td>
-
-                <!-- Extensión + Avatar -->
                 <td class="px-4 py-3 whitespace-nowrap">
                   <div class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#2E86AB] to-[#56cfe1] flex items-center justify-center text-white text-sm font-bold">
@@ -131,13 +128,9 @@
                     <span class="font-bold text-gray-800">{{ ext.extension }}</span>
                   </div>
                 </td>
-
-                <!-- Nombre -->
                 <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
                   {{ ext.name || 'Sin nombre' }}
                 </td>
-
-                <!-- CW -->
                 <td class="px-4 py-3 whitespace-nowrap text-center">
                   @if (ext.cw) {
                     <span class="material-icons-outlined text-green-600 text-sm">check_box</span>
@@ -145,8 +138,6 @@
                     <span class="material-icons-outlined text-gray-300 text-sm">check_box_outline_blank</span>
                   }
                 </td>
-
-                <!-- DND -->
                 <td class="px-4 py-3 whitespace-nowrap text-center">
                   @if (ext.dnd) {
                     <span class="material-icons-outlined text-red-500 text-sm">check_box</span>
@@ -154,8 +145,6 @@
                     <span class="material-icons-outlined text-gray-300 text-sm">check_box_outline_blank</span>
                   }
                 </td>
-
-                <!-- FM/FM -->
                 <td class="px-4 py-3 whitespace-nowrap text-center">
                   @if (ext.fmfm) {
                     <span class="material-icons-outlined text-blue-600 text-sm">check_box</span>
@@ -163,38 +152,32 @@
                     <span class="material-icons-outlined text-gray-300 text-sm">check_box_outline_blank</span>
                   }
                 </td>
-
-                <!-- CF / CFB / CFU -->
                 <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-700">
-                    @if (ext.fmfm) {
+                  @if (ext.fmfm) {
                     <span class="material-icons-outlined text-blue-600 text-sm">check_box</span>
                   } @else {
                     <span class="material-icons-outlined text-gray-300 text-sm">check_box_outline_blank</span>
                   }
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-700">
-                    @if (ext.fmfm) {
+                  @if (ext.fmfm) {
                     <span class="material-icons-outlined text-blue-600 text-sm">check_box</span>
                   } @else {
                     <span class="material-icons-outlined text-gray-300 text-sm">check_box_outline_blank</span>
                   }
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-700">
-                    @if (ext.fmfm) {
+                  @if (ext.fmfm) {
                     <span class="material-icons-outlined text-blue-600 text-sm">check_box</span>
                   } @else {
                     <span class="material-icons-outlined text-gray-300 text-sm">check_box_outline_blank</span>
                   }
                 </td>
-
-                <!-- Tipo -->
                 <td class="px-4 py-3 whitespace-nowrap">
                   <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
                     {{ ext.type || 'SIP' }}
                   </span>
                 </td>
-
-                <!-- Acciones -->
                 <td class="px-4 py-3 whitespace-nowrap text-right">
                   <div class="flex justify-end gap-2">
                     <button class="ext-action-icon-btn w-8 h-8 p-0" title="Editar">
@@ -211,13 +194,32 @@
         </table>
       </div>
 
-      <!-- Paginación básica (estática para prueba visual) -->
+      <!-- ✅ PAGINACIÓN DINÁMICA CON 3 BOTONES -->
       <div class="px-4 py-3 bg-gray-50 border-t border-gray-200 flex items-center justify-between text-sm text-gray-700">
-        <span>Mostrando 1 a {{ extensions.length }} de {{ extensions.length }} extensiones</span>
+        <div class="flex items-center gap-2">
+          <span>Mostrando <span class="font-medium">{{ startIndex + 1 }}</span> a <span class="font-medium">{{ endIndex }}</span> de <span class="font-medium">{{ extensions.length }}</span> extensiones</span>
+        </div>
         <div class="flex space-x-1">
-          <button class="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-100">Anterior</button>
-          <button class="px-3 py-1 bg-[#2E86AB] text-white rounded-md">1</button>
-          <button class="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-100">Siguiente</button>
+          <button 
+            class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+            [disabled]="currentPage === 1"
+            (click)="previousPage()">
+            Anterior
+          </button>
+          @for (page of [1, 2, 3]; track page) {
+            <button 
+              class="px-3 py-1 rounded-md text-sm 
+                    {{ currentPage === page ? 'bg-[#2E86AB] text-white' : 'border border-gray-300 text-gray-700 hover:bg-gray-100' }}"
+              (click)="goToPage(page)">
+              {{ page }}
+            </button>
+          }
+          <button 
+            class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+            [disabled]="currentPage === 3"
+            (click)="nextPage()">
+            Siguiente
+          </button>
         </div>
       </div>
     </div>
