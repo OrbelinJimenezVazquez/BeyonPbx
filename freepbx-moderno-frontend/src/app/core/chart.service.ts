@@ -147,7 +147,8 @@ export class ChartService {
     if (!ctx) return null;
 
     const labels = data.map((d: any) => {
-      const date = new Date(d.date);
+      // Forzar interpretación en zona horaria local agregando 'T00:00:00'
+      const date = new Date(d.date + 'T00:00:00');
       return date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
     });
 
