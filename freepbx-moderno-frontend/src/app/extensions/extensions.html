@@ -100,7 +100,12 @@
           <thead class="bg-gray-50">
             <tr>
               <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                <input type="checkbox" class="form-checkbox h-4 w-4 text-[#2E86AB] rounded">
+                <!-- ✅ Checkbox de cabecera CORREGIDO -->
+                <input 
+                  type="checkbox" 
+                  [checked]="allSelected" 
+                  (change)="toggleAllSelection($event)"
+                  class="form-checkbox h-4 w-4 text-[#2E86AB] rounded">
               </th>
               <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Extensión</th>
               <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
@@ -118,7 +123,12 @@
             @for (ext of paginatedExtensions; track ext.extension) {
               <tr class="hover:bg-gray-50 transition-colors">
                 <td class="px-4 py-3 whitespace-nowrap">
-                  <input type="checkbox" class="form-checkbox h-4 w-4 text-[#2E86AB] rounded">
+                  <!-- ✅ Checkbox individual CORREGIDO -->
+                  <input 
+                    type="checkbox" 
+                    [(ngModel)]="ext.selected"
+                    (change)="updateAllSelected()"
+                    class="form-checkbox h-4 w-4 text-[#2E86AB] rounded">
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap">
                   <div class="flex items-center gap-2">
@@ -132,22 +142,22 @@
                   {{ ext.name || 'Sin nombre' }}
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap text-center">
-                    <input type="checkbox" class="form-checkbox h-4 w-4 text-[#2E86AB] rounded">
+                  <input type="checkbox" [(ngModel)]="ext.cw" class="form-checkbox h-4 w-4 text-[#2E86AB] rounded">
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap text-center">
-                    <input type="checkbox" class="form-checkbox h-4 w-4 text-[#2E86AB] rounded">
+                  <input type="checkbox" [(ngModel)]="ext.dnd" class="form-checkbox h-4 w-4 text-[#2E86AB] rounded">
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap text-center">
-                    <input type="checkbox" class="form-checkbox h-4 w-4 text-[#2E86AB] rounded">
+                  <input type="checkbox" [(ngModel)]="ext.fmfm" class="form-checkbox h-4 w-4 text-[#2E86AB] rounded">
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-700">
-                    <input type="checkbox" class="form-checkbox h-4 w-4 text-[#2E86AB] rounded">
+                <td class="px-4 py-3 whitespace-nowrap text-center">
+                  <input type="checkbox" [(ngModel)]="ext.cf" class="form-checkbox h-4 w-4 text-[#2E86AB] rounded">
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-700">
-                    <input type="checkbox" class="form-checkbox h-4 w-4 text-[#2E86AB] rounded">
+                <td class="px-4 py-3 whitespace-nowrap text-center">
+                  <input type="checkbox" [(ngModel)]="ext.cfb" class="form-checkbox h-4 w-4 text-[#2E86AB] rounded">
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-700">
-                    <input type="checkbox" class="form-checkbox h-4 w-4 text-[#2E86AB] rounded">
+                <td class="px-4 py-3 whitespace-nowrap text-center">
+                  <input type="checkbox" [(ngModel)]="ext.cfu" class="form-checkbox h-4 w-4 text-[#2E86AB] rounded">
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap">
                   <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
