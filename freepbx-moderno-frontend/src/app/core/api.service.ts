@@ -1,23 +1,21 @@
 // src/app/core/api.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-  //private baseUrl = 'http://localhost:8000/api';
-  private baseUrl = '/api';  // sin dominio ni puerto por el proxy.conf.json
+  private baseUrl = '/api';
+
   constructor(private http: HttpClient) {}
 
-  // ENDOPOINTS
-    // Endpoint para obtener extensiones
+  // ENDPOINTS EXISTENTES
   getExtensions(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/extensions`);
   }
 
-  // Llamadas detalladas (sin paginación, pero con más datos)
   getDetailedCalls(
     period: 'today' | 'week' | 'month' | 'year' = 'month',
     page: number = 1,
@@ -26,7 +24,6 @@ export class ApiService {
     return this.http.get<any>(`${this.baseUrl}/calls/detailed?period=${period}&page=${page}&size=${size}`);
   }
 
-  // Endpoint para obtener llamadas por medio del periodo
   getCallsByPeriod(
     period: 'today' | 'week' | 'month' | 'year' = 'month',
     page: number = 1,
@@ -35,42 +32,127 @@ export class ApiService {
     return this.http.get<any>(`${this.baseUrl}/calls?period=${period}&page=${page}&size=${size}`);
   }
   
-  // Endpoint para obtner las llamadas recientes
   getRecentCalls(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/calls/recent`);
   }
 
-  // Endpoint para obtener los troncales, Que son los toncales(trunks) estos son las lineas que conectan el PBx con la red telefonica.
   getTrunks(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/trunks`);
   }
 
-  // Endpoint para obtener las estadisticas avanzadas del dashboard
-  getAdvancedDashboardStats(): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/dashboard/advanced-stats`);
+  // NUEVOS ENDPOINTS CON FILTROS
+  getAdvancedDashboardStats(filters?: {
+    period?: 'today' | 'week' | 'month' | 'year';
+    startDate?: string;
+    endDate?: string;
+  }): Observable<any> {
+    let params = new HttpParams();
+    
+    if (filters?.period) {
+      params = params.set('period', filters.period);
+    }
+    if (filters?.startDate) {
+      params = params.set('start_date', filters.startDate);
+    }
+    if (filters?.endDate) {
+      params = params.set('end_date', filters.endDate);
+    }
+
+    return this.http.get<any>(`${this.baseUrl}/dashboard/advanced-stats`, { params });
   }
 
-  // Endpoint para obtener los IVRs, que son los sistemas de respuesta de voz interactiva.
+  getAdvancedChartsData(filters?: {
+    period?: 'today' | 'week' | 'month' | 'year';
+    chartType?: 'trend' | 'status' | 'agents' | 'destinations' | 'heatmap';
+  }): Observable<any> {
+    let params = new HttpParams();
+    
+    if (filters?.period) {
+      params = params.set('period', filters.period);
+    }
+    if (filters?.chartType) {
+      params = params.set('chart_type', filters.chartType);
+    }
+
+    return this.http.get<any>(`${this.baseUrl}/dashboard/advanced-charts`, { params });
+  }
+
   getIvrs(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/ivrs`);
   }
-  // Endpoint para obtener las rutas entrantes
+
   getIncomingRoutes(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/incoming-routes`);
   }
 
-  // Endpoint para obtener detalles de una ruta entrante específica
   getRouteDetail(routeNumber: string): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/incoming-routes/${routeNumber}`);
   }
 
-  // Endpoint para generar el reporte del dashboard en PDF
   generateDashboardPdf(): Observable<Blob> {
     return this.http.get(`${this.baseUrl}/dashboard/report/pdf`, { responseType: 'blob' });
   }
 
-  // Endpoint para obtener datos para gráficos avanzados
-  getAdvancedChartsData(): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/dashboard/advanced-charts`);
+  // NUEVOS ENDPOINTS PARA MÉTRICAS DE COLAS
+  getQueueMetrics(period: 'today' | 'week' | 'month' | 'year' = 'today'): Observable<any> {
+    // Si es 'year', usamos 'month' en el backend (30 días es suficiente)
+    const backendPeriod = period === 'year' ? 'month' : period;
+    return this.http.get<any>(`${this.baseUrl}/dashboard/queue-metrics?period=${backendPeriod}`);
+  }
+
+  getQueueSLA(period: 'today' | 'week' | 'month' | 'year' = 'today', slaThreshold: number = 30): Observable<any> {
+    // Si es 'year', usamos 'month' en el backend (30 días es suficiente)
+    const backendPeriod = period === 'year' ? 'month' : period;
+    return this.http.get<any>(`${this.baseUrl}/dashboard/queue-sla?period=${backendPeriod}&sla_threshold=${slaThreshold}`);
+  }
+
+  getActiveCalls(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/dashboard/active-calls`);
+  }
+
+  getQueueSummary(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/dashboard/queue-summary`);
+  }
+
+  getAgentsRealtimeStatus(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/asternic/agents/realtime-status`);
+  }
+
+  getAgentDetails(extension: string): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/asternic/agents/${extension}/details`);
+  }
+
+  getAgentsSessions(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/asternic/agents/sessions`);
+  }
+
+  getAgentsPauses(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/asternic/agents/pauses`);
+  }
+
+  // NUEVOS ENDPOINTS MEJORADOS
+  getQueuesRealtimeMetrics(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/asternic/queues/realtime-metrics`);
+  }
+
+  getEventTypes(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/asternic/events/types`);
+  }
+  
+  // ENDPOINTS PARA GESTIÓN DE COLAS
+  getQueues(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/queues`);
+  }
+
+  createQueue(queue: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/queues`, queue);
+  }
+
+  updateQueue(id: string, queue: any): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/queues/${id}`, queue);
+  }
+
+  deleteQueue(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/queues/${id}`);
   }
 }

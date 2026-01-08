@@ -1,109 +1,158 @@
-
-    <div class="flex h-screen">
-      <!-- Sidebar -->
-      <aside class="w-64 bg-dark-teal text-white flex flex-col">
-        <!-- Logo -->
-        <div class="h-16 flex items-center justify-center">
-          <img src="../src/assets/img/Logo_Beyond_Header_w.png" alt="Logo">
-        </div>
-        
-        <!-- Navegación -->
-        <nav class="flex-1 py-4">
-          <ul class="space-y-1">
-            <li>
-              <a routerLink="/" 
-                 class="main-nav flex items-center px-6 py-3 hover:bg-ocean-blue transition-colors">
-                <span class="material-icons-outlined text-sm mr-3 ">dashboard</span>
-                <span class="text-sm font-medium">Dashboard</span>
-              </a>
-            </li>
-            <li>
-              <a routerLink="/extensions" 
-                 class=" main-nav flex items-center px-6 py-3 hover:bg-ocean-blue transition-colors">
-                <span class="material-icons-outlined text-sm mr-3">phone</span>
-                <span class="text-sm font-medium">Extensiones</span>
-              </a>
-            </li>
-            <li>
-              <a routerLink="/calls" 
-                 class="main-nav flex items-center px-6 py-3 hover:bg-ocean-blue transition-colors">
-                <span class="material-icons-outlined text-sm mr-3">call</span>
-                <span class="text-sm font-medium">Llamadas</span>
-              </a>
-            </li>
-            <li>
-              <a routerLink="/trunks" 
-                 class="main-nav flex items-center px-6 py-3 hover:bg-ocean-blue transition-colors">
-                <span class="material-icons-outlined text-sm mr-3">router</span>
-                <span class="text-sm font-medium">Troncales</span>
-              </a>
-            </li>
-            <li>
-              <a routerLink="/ivr"
-                 class="main-nav flex items-center px-6 py-3 hover:bg-ocean-blue transition-colors">
-                <span class="material-icons-outlined text-sm mr-3">record_voice_over</span>
-                <span class="text-sm font-medium">IVR</span>
-              </a>
-            </li>
-            <li>
-              <a routerLink="/incoming-routes" 
-                 class="main-nav flex items-center px-6 py-3 hover:bg-ocean-blue transition-colors">
-                <span class="material-icons-outlined text-sm mr-3">call_received</span>
-                <span class="text-sm font-medium">Rutas Entrantes</span>
-              </a>
-            </li>
-            <li>
-              <a routerLink="/monitoring" 
-                 class="main-nav flex items-center px-6 py-3 hover:bg-ocean-blue transition-colors">
-                <span class="material-icons-outlined text-sm mr-3">show_chart</span>
-                <span class="text-sm font-medium">Monitoreo</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </aside>
-
-      <!-- Main Content -->
-      <main class="flex-1 flex flex-col overflow-hidden">
-        <!-- Header -->
-        <header class="h-16 bg-bright-snow flex items-center justify-between px-6">
-          <div class="flex items-center">
-            <div class="relative w-full max-w-md">
-              <span class="absolute inset-y-0 left-0 pl-3 flex items-center">
-                <span class="material-icons-outlined text-slate-grey text-lg">search</span>
-              </span>
-              <input 
-                class="w-full pl-10 pr-4 py-2 rounded-full border border-platinum bg-white text-sm focus:outline-none focus:ring-2 focus:ring-ocean-blue focus:border-transparent text-carbon-black transition-colors" 
-                placeholder="Buscar..." 
-                type="text"/>
-            </div>
-          </div>
-          
-          <div class="flex items-center space-x-4">
-            <button class="p-2 text-slate-grey hover:text-ocean-blue transition-colors rounded-full hover:bg-platinum">
-              <span class="material-icons-outlined text-xl">dark_mode</span>
-            </button>
-            
-            <button class="relative p-2 text-slate-grey hover:text-ocean-blue transition-colors">
-              <span class="material-icons-outlined text-xl">notifications</span>
-              <span class="absolute top-1 right-1 h-4 w-4 bg-raspberry text-white text-[10px] font-bold flex items-center justify-center rounded-full">3</span>
-            </button>
-            
-            <div class="flex items-center pl-4 border-l border-platinum">
-              <div class="h-9 w-9 rounded-full bg-medium-jungle text-white flex items-center justify-center font-bold text-sm">
-                ini
-              </div>
-              <div class="ml-3 hidden lg:block">
-                <p class="text-sm font-medium text-carbon-black">Nombre</p>
-                <p class="text-xs text-slate-grey">Administrator</p>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        <!-- Content -->
-        <div class="flex-1 overflow-y-auto p-6">
-          <router-outlet></router-outlet>
-        </div>
-      </main>
+<!-- src/app/layout/layout.html  -->
+<div class="flex h-screen bg-gray-50">
+  <!-- Sidebar -->
+  <aside class="sidebar-modern">
+    <!-- Logo Section -->
+    <div class="sidebar-logo">
+      <div class="logo-container">
+        <img src="img/Logo_Beyond_Header_w.png" alt="FreePBX Logo" class="logo-image"/> 
+      </div>
     </div>
+
+    <!-- Navigation -->
+    <nav class="sidebar-nav">
+      <ul class="nav-list">
+        <li>
+          <a routerLink="/"
+             routerLinkActive="nav-active"
+             [routerLinkActiveOptions]="{exact: true}"
+             class="nav-item">
+            <span class="material-icons-round nav-icon">dashboard</span>
+            <span class="nav-text">Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/extensions"
+             routerLinkActive="nav-active"
+             class="nav-item">
+            <span class="material-icons-outlined nav-icon">cable</span>
+            <span class="nav-text">Extensiones</span>
+          </a>
+        </li>
+        
+        <li>
+          <a routerLink="/calls"
+             routerLinkActive="nav-active"
+             class="nav-item">
+            <span class="material-icons-round nav-icon">call</span>
+            <span class="nav-text">Llamadas</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/trunks"
+             routerLinkActive="nav-active"
+             class="nav-item">
+            <span class="material-icons-outlined nav-icon">router</span>
+            <span class="nav-text">Troncales</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/ivr"
+             routerLinkActive="nav-active"
+             class="nav-item">
+            <span class="material-icons nav-icon">record_voice_over</span>
+            <span class="nav-text">IVR</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/incoming-routes"
+             routerLinkActive="nav-active"
+             class="nav-item">
+            <span class="material-icons-outlined nav-icon">call_received</span>
+            <span class="nav-text">Rutas Entrantes</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/monitoring"
+             routerLinkActive="nav-active"
+             class="nav-item">
+            <span class="material-icons-outlined nav-icon">show_chart</span>
+            <span class="nav-text">Monitoreo</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/queues"
+             routerLinkActive="nav-active"
+             class="nav-item">
+            <span class="material-icons-outlined nav-icon">queue</span>
+            <span class="nav-text">Colas</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer">
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-version">
+        <span class="material-icons-outlined text-sm text-gray-400">info</span>
+        <span class="text-xs text-gray-400">v1.0.0</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="main-content-wrapper">
+    <!-- Header -->
+    <header class="main-header">
+      <!-- Left Section: Search -->
+      <div class="header-left">
+        <div class="search-container">
+          <span class="material-icons-outlined search-icon">search</span>
+          <input
+            type="text"
+            placeholder="Buscar extensiones, llamadas, rutas..."
+            class="search-input"/>
+        </div>
+      </div>
+
+      <!-- Right Section: Actions -->
+      <div class="header-right">
+        <!-- Dark Mode Toggle -->
+        <button
+          (click)="toggleDarkMode()"
+          class="header-icon-btn"
+          title="Cambiar tema">
+          <span class="material-icons" *ngIf="!isDarkMode">dark_mode</span>
+          <span class="material-icons" *ngIf="isDarkMode">light_mode</span>
+        </button>
+
+        <!-- Notifications -->
+        <button class="header-icon-btn header-notification" id="icon-no" title="Notificaciones">
+          <span class="material-icons" >notifications</span>
+          <span class="notification-badge">3</span>
+        </button>
+
+        <!-- Settings -->
+        <button class="header-icon-btn" title="Configuración">
+          <span class="material-icons">settings</span>
+        </button>
+        <div class="divider"></div>
+        <!-- User Menu -->
+        <div class="user-menu">
+          <div class="user-avatar">
+            <span class="user-avatar-text">AD</span>
+          </div>
+          <div class="user-info">
+            <p class="user-name">Administrador</p>
+            <p class="user-role">Sistema</p>
+          </div>
+          <button class="user-dropdown-btn">
+            <span class="material-icons text-lg">expand_more</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="page-content">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+
+  <!-- Toast Notifications -->
+  <app-toast></app-toast>
+
+  <!-- Confirmation Modal -->
+  <app-confirmation-modal></app-confirmation-modal>
+</div>

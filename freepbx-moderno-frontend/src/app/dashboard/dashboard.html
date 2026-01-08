@@ -1,80 +1,231 @@
 <!-- src/app/dashboard/dashboard.html -->
-<div class="p-6 space-y-6">
+<div class="p-6 space-y-6" #dashboardContainer>
   <!-- Header -->
-  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-    <div class="flex items-center gap-3">
-      <span class="material-icons-outlined text-[#2E86AB] text-2xl">dashboard</span>
-      <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    <div class="flex items-center gap-4">
+      <div class="w-12 h-12 rounded-[50px] m-2 bg-[#2E86AB] flex items-center justify-center shadow-lg">
+        <span class="material-icons-round text-white text-2xl">dashboard</span>
+      </div>
+      <div>
+        <h1 class="text-3xl font-bold text-gray-800">Dashboard</h1>
+        <p class="text-sm text-gray-500 mt-1">Vista general del sistema</p>
+      </div>
     </div>
     <div class="flex gap-3">
-      <button 
-        (click)="downloadPdf()" 
+      <button
+        (click)="downloadPdf()"
         [disabled]="loading"
-        class="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
-        <span class="material-icons-outlined text-lg">download</span>
+        class="export-btn-secondary">
+        <span class="material-icons-round text-lg">download</span>
         Exportar
       </button>
-      <button 
-        (click)="loadStats()" 
+      <button
+        (click)="loadStats()"
         [disabled]="loading"
-        class="flex items-center gap-2 px-4 py-2 bg-[#2E86AB] hover:bg-[#257298] text-white rounded-lg transition-colors text-sm font-medium">
-        <span class="material-icons-outlined text-lg">refresh</span>
+        class="btn-primary">
+        <span class="material-icons-round text-lg" [class.rotate-animation]="loading">refresh</span>
         {{ loading ? 'Cargando...' : 'Actualizar' }}
       </button>
     </div>
   </div>
 
-  <!-- Stats Grid -->
-  @if (!loading) {
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <!-- Llamadas Hoy -->
-      <div class="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
-        <div class="flex justify-between items-start">
-          <div>
-            <p class="text-sm text-gray-500 mb-1">Llamadas Hoy</p>
-            <p class="text-3xl font-bold text-gray-800">{{ stats.general?.calls_today || 0 }}</p>
-          </div>
-          <div class="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
-            <span class="material-icons-outlined text-blue-600">call</span>
-          </div>
-        </div>
+  <!-- Filtros de Dashboard -->
+  <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-lg">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <!-- Filtros de Período -->
+      <div class="flex flex-wrap gap-2">
+        <button 
+          (click)="changePeriod('today')" 
+          [class.filter-active]="selectedPeriod === 'today'"
+          class="filter-btn">
+          <span class="material-icons-outlined text-base mr-1.5">today</span>
+          Hoy
+        </button>
+        <button 
+          (click)="changePeriod('week')" 
+          [class.filter-active]="selectedPeriod === 'week'"
+          class="filter-btn">
+          <span class="material-icons-outlined text-base mr-1.5">date_range</span>
+          7 días
+        </button>
+        <button 
+          (click)="changePeriod('month')" 
+          [class.filter-active]="selectedPeriod === 'month'"
+          class="filter-btn">
+          <span class="material-icons-outlined text-base mr-1.5">calendar_month</span>
+          30 días
+        </button>
+        <button 
+          (click)="changePeriod('year')" 
+          [class.filter-active]="selectedPeriod === 'year'"
+          class="filter-btn">
+          <span class="material-icons-outlined text-base mr-1.5">event</span>
+          1 año
+        </button>
       </div>
 
-      <!-- Llamadas Esta Semana -->
-      <div class="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
-        <div class="flex justify-between items-start">
-          <div>
-            <p class="text-sm text-gray-500 mb-1">Llamadas Esta Semana</p>
-            <p class="text-3xl font-bold text-gray-800">{{ stats.general?.calls_this_week || 0 }}</p>
-          </div>
-          <div class="h-10 w-10 rounded-lg bg-green-100 flex items-center justify-center">
-            <span class="material-icons-outlined text-green-600">calendar_today</span>
-          </div>
+      <!-- Filtros de Tipo de Gráfica -->
+      <div class="flex items-center gap-3">
+        <div class="flex gap-2">
+          <button 
+            (click)="changeChartType('line')" 
+            [class.chart-type-active]="selectedChartType === 'line'"
+            class="chart-type-btn"
+            title="Gráfica de línea">
+            <span class="material-icons-outlined text-lg">show_chart</span>
+          </button>
+          <button 
+            (click)="changeChartType('bar')" 
+            [class.chart-type-active]="selectedChartType === 'bar'"
+            class="chart-type-btn"
+            title="Gráfica de barras">
+            <span class="material-icons-outlined text-lg">bar_chart</span>
+          </button>
+          <button 
+            (click)="changeChartType('area')" 
+            [class.chart-type-active]="selectedChartType === 'area'"
+            class="chart-type-btn"
+            title="Gráfica de área">
+            <span class="material-icons-outlined text-lg">area_chart</span>
+          </button>
         </div>
+
+        <div class="h-6 w-px bg-gray-200"></div>
+
+        <button 
+          (click)="toggleComparison()"
+          [class.comparison-active]="showComparison"
+          class="comparison-btn">
+          <span class="material-icons-outlined text-base mr-1.5">compare</span>
+          Comparar
+        </button>
+      </div>
+    </div>
+
+    <!-- Info del período seleccionado -->
+    <div class="mt-4 pt-4 border-t border-gray-100">
+      <div class="flex items-center gap-2 text-sm text-gray-600">
+        <span class="material-icons-outlined text-[#2E86AB] text-base">info</span>
+        <span>
+          Mostrando datos de: 
+          <span class="font-semibold text-gray-800">
+            @if (selectedPeriod === 'today') {
+              Hoy
+            } @else if (selectedPeriod === 'week') {
+              Últimos 7 días
+            } @else if (selectedPeriod === 'month') {
+              Últimos 30 días
+            } @else {
+              Último año
+            }
+          </span>
+        </span>
+        @if (showComparison) {
+          <span class="text-gray-400">•</span>
+          <span class="text-[#10b981] font-medium">Con comparación activada</span>
+        }
+      </div>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="space-y-6">
+      <!-- Stats Cards Skeleton -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        @for (i of [1,2,3,4]; track i) {
+          <div class="stat-card-skeleton">
+            <div class="skeleton-circle"></div>
+            <div class="skeleton-lines">
+              <div class="skeleton-line short"></div>
+              <div class="skeleton-line medium"></div>
+            </div>
+          </div>
+        }
       </div>
 
-      <!-- Llamadas Este Mes -->
-      <div class="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
-        <div class="flex justify-between items-start">
-          <div>
-            <p class="text-sm text-gray-500 mb-1">Llamadas Este Mes</p>
-            <p class="text-3xl font-bold text-gray-800">{{ stats.general?.calls_this_month || 0 }}</p>
+      <!-- Charts Skeleton -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        @for (i of [1,2,3,4]; track i) {
+          <div class="chart-card-skeleton">
+            <div class="skeleton-line short mb-4"></div>
+            <div class="skeleton-chart"></div>
           </div>
-          <div class="h-10 w-10 rounded-lg bg-purple-100 flex items-center justify-center">
-            <span class="material-icons-outlined text-purple-600">calendar_month</span>
+        }
+      </div>
+    </div>
+  } @else {
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Llamadas del Período -->
+      <div class="stat-card fade-in-up">
+        <div class="flex justify-between items-start">
+          <div class="flex-1">
+            <p class="text-sm font-medium text-gray-500 mb-2">
+              @if (selectedPeriod === 'today') {
+                Llamadas Hoy
+              } @else if (selectedPeriod === 'week') {
+                Llamadas (7d)
+              } @else if (selectedPeriod === 'month') {
+                Llamadas (30d)
+              } @else {
+                Llamadas (1a)
+              }
+            </p>
+            <p class="stat-value">{{ stats.general?.calls_today || stats.general?.calls_this_week || stats.general?.calls_this_month || 0 }}</p>
+            <p class="text-xs text-gray-400 mt-1">Total del período</p>
+          </div>
+          <div class="stat-icon">
+            <span class="material-icons-round text-[#2E86AB] text-2xl relative z-10">call</span>
           </div>
         </div>
       </div>
 
       <!-- Tasa de Respuesta -->
-      <div class="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
+      <div class="stat-card fade-in-up">
         <div class="flex justify-between items-start">
-          <div>
-            <p class="text-sm text-gray-500 mb-1">Tasa de Respuesta</p>
-            <p class="text-3xl font-bold text-gray-800">{{ stats.general?.answer_rate || 0 }}%</p>
+          <div class="flex-1">
+            <p class="text-sm font-medium text-gray-500 mb-2">Tasa de Respuesta</p>
+            <p class="stat-value">{{ stats.general?.answer_rate || 0 }}%</p>
+            <p class="text-xs mt-1">
+              @if ((stats.general?.answer_rate || 0) >= 85) {
+                <span class="text-green-600 font-medium">▲ Excelente</span>
+              } @else if ((stats.general?.answer_rate || 0) >= 70) {
+                <span class="text-amber-600 font-medium">● Normal</span>
+              } @else {
+                <span class="text-red-600 font-medium">▼ Mejorable</span>
+              }
+            </p>
           </div>
-          <div class="h-10 w-10 rounded-lg bg-amber-100 flex items-center justify-center">
-            <span class="material-icons-outlined text-amber-600">trending_up</span>
+          <div class="stat-icon">
+            <span class="material-icons-round text-[#FFC107] text-2xl relative z-10">trending_up</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Duración Promedio -->
+      <div class="stat-card fade-in-up">
+        <div class="flex justify-between items-start">
+          <div class="flex-1">
+            <p class="text-sm font-medium text-gray-500 mb-2">Duración Promedio</p>
+            <p class="stat-value">{{ stats.general?.avg_duration || 0 }}<span class="text-base">s</span></p>
+            <p class="text-xs text-gray-400 mt-1">Por llamada</p>
+          </div>
+          <div class="stat-icon">
+            <span class="material-icons-outlined text-[#8b5cf6] text-2xl relative z-10">timer</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Extensiones Activas -->
+      <div class="stat-card fade-in-up">
+        <div class="flex justify-between items-start">
+          <div class="flex-1">
+            <p class="text-sm font-medium text-gray-500 mb-2">Extensiones Activas</p>
+            <p class="stat-value">{{ stats.general?.active_extensions || 0 }}</p>
+            <p class="text-xs text-gray-400 mt-1">En línea ahora</p>
+          </div>
+          <div class="stat-icon">
+            <span class="material-icons-round text-[#28A745] text-2xl relative z-10">phone_enabled</span>
           </div>
         </div>
       </div>
@@ -83,69 +234,114 @@
     <!-- Charts Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Estado de Llamadas -->
-      <div class="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Estado de Llamadas</h3>
+      <div class="chart-card enhanced-chart-card">
+        <div class="chart-header">
+          <h3>Estado de Llamadas</h3>
+          <span class="chart-subtitle">Distribución por resultado</span>
+        </div>
         <div class="h-64">
           <canvas #statusChart class="w-full h-full"></canvas>
         </div>
       </div>
 
       <!-- Tendencia de Llamadas -->
-      <div class="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Tendencia de Llamadas</h3>
+      <div class="chart-card enhanced-chart-card">
+        <div class="chart-header">
+          <h3>Tendencia de Llamadas</h3>
+          <span class="chart-subtitle">Evolución en el tiempo</span>
+        </div>
         <div class="h-64">
           <canvas #trendChart class="w-full h-full"></canvas>
         </div>
       </div>
 
       <!-- Top Agentes -->
-      <div class="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Top Agentes</h3>
+      <div class="chart-card enhanced-chart-card">
+        <div class="chart-header">
+          <h3>Top Agentes</h3>
+          <span class="chart-subtitle">Llamadas contestadas</span>
+        </div>
         <div class="h-64">
           <canvas #agentChart class="w-full h-full"></canvas>
         </div>
       </div>
 
       <!-- Distribución por Tipo -->
-      <div class="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Distribución por Tipo</h3>
+      <div class="chart-card enhanced-chart-card">
+        <div class="chart-header">
+          <h3>Distribución por Tipo</h3>
+          <span class="chart-subtitle">Destinos de llamadas</span>
+        </div>
         <div class="h-64">
           <canvas #destChart class="w-full h-full"></canvas>
+        </div>
+      </div>
+
+      <!-- Llamadas por Hora (Nueva) -->
+      <div class="chart-card enhanced-chart-card lg:col-span-2">
+        <div class="chart-header">
+          <h3>Distribución por Hora del Día</h3>
+          <span class="chart-subtitle">Volumen de llamadas</span>
+        </div>
+        <div class="h-64">
+          <canvas #hourlyChart class="w-full h-full"></canvas>
         </div>
       </div>
     </div>
 
     <!-- Top Agents Table -->
-    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
-      <div class="p-5 border-b border-gray-200">
-        <h3 class="text-lg font-semibold text-gray-800">Top Agentes (últimos 7 días)</h3>
+    <div class="modern-table">
+      <div class="px-6 py-5 border-b border-gray-100">
+        <div class="flex items-center gap-3">
+          <span class="material-icons-outlined text-[#2E86AB]">emoji_events</span>
+          <h3 class="text-lg font-semibold text-gray-800">Top Agentes del Período</h3>
+        </div>
       </div>
       <div class="overflow-x-auto">
         <table class="w-full">
           <thead>
-            <tr class="bg-gray-50 text-xs text-gray-600 font-medium">
-              <th class="px-6 py-3 text-left">Agente</th>
-              <th class="px-6 py-3 text-left">Extensión</th>
-              <th class="px-6 py-3 text-left">Total Llamadas</th>
-              <th class="px-6 py-3 text-left">Contestadas</th>
-              <th class="px-6 py-3 text-left">Tasa de Respuesta</th>
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Agente</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Extensión</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Llamadas</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contestadas</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tasa de Respuesta</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-100 text-sm">
+          <tbody class="divide-y divide-gray-100">
             @for (agent of stats.top_agents || []; track agent.extension) {
-              <tr class="hover:bg-gray-50 transition-colors">
-                <td class="px-6 py-4 font-medium text-gray-800">{{ agent.name }}</td>
-                <td class="px-6 py-4 text-gray-700">{{ agent.extension }}</td>
-                <td class="px-6 py-4 text-gray-700">{{ agent.total_calls }}</td>
-                <td class="px-6 py-4 text-gray-700">{{ agent.answered_calls }}</td>
-                <td class="px-6 py-4">
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#2E86AB] to-[#2E86AB] flex items-center justify-center text-white font-bold text-sm mr-3">
+                      {{ agent.name.charAt(0).toUpperCase() }}
+                    </div>
+                    <span class="font-medium text-gray-800">{{ agent.name }}</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-gray-600">{{ agent.extension }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-gray-600">{{ agent.total_calls }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-gray-600">{{ agent.answered_calls }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
                   @if (agent.total_calls > 0) {
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      {{ (agent.answered_calls / agent.total_calls * 100 | number:'1.1-1') }}%
-                    </span>
+                    @if ((agent.answered_calls / agent.total_calls * 100) >= 85) {
+                      <span class="badge-success">
+                        {{ (agent.answered_calls / agent.total_calls * 100 | number:'1.1-1') }}%
+                      </span>
+                    } @else {
+                      <span class="badge-warning">
+                        {{ (agent.answered_calls / agent.total_calls * 100 | number:'1.1-1') }}%
+                      </span>
+                    }
                   } @else {
-                    <span class="text-gray-500 text-sm">-</span>
+                    <span class="text-gray-400 text-sm">-</span>
                   }
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                  No hay datos de agentes disponibles
                 </td>
               </tr>
             }
@@ -153,11 +349,6 @@
         </table>
       </div>
     </div>
-  } @else {
-    <!-- Loading State -->
-    <div class="flex flex-col items-center justify-center py-16">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2E86AB] mb-4"></div>
-      <p class="text-gray-500">Cargando métricas...</p>
-    </div>
+
   }
 </div>
