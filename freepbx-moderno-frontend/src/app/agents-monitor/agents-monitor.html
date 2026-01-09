@@ -2,9 +2,9 @@
 <div class="p-6 space-y-6">
   <!-- Header -->
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-    <div class="flex items-center gap-4">
-      <div class="w-12 h-12 rounded-2xl bg-[#2E86AB] flex items-center justify-center shadow-lg" 
-           style="background: linear-gradient(135deg, #2E86AB 0%, #56cfe1 100%);">
+    <div class="flex items-center gap-4 ">
+      <div class="w-12 h-12 rounded-[50px] bg-[#2E86AB] flex items-center justify-center shadow-lg" 
+           style="background: #2E86AB;">
         <span class="material-icons-outlined text-white text-2xl">groups</span>
       </div>
       <div>
@@ -15,15 +15,15 @@
     
     <div class="flex items-center gap-3">
       <!-- Toggle de vista -->
-      <div class="flex bg-gray-100 rounded-xl p-1">
+      <div class="flex bg-gray-100 rounded-[50px] p-2">
         <button 
           (click)="viewMode = 'agents'"
           [class.bg-white]="viewMode === 'agents'"
           [class.shadow-sm]="viewMode === 'agents'"
           [class.text-[#2E86AB]]="viewMode === 'agents'"
           [class.text-gray-600]="viewMode !== 'agents'"
-          class="px-4 py-2 rounded-lg text-sm font-medium transition-all">
-          <span class="material-icons-outlined text-sm align-middle mr-1">person</span>
+          class="p-2 rounded-l-[50px] text-sm font-medium transition-all hover:bg-white/50 hover:text-[#2E86AB] hover:scale-105">
+          <span class="material-icons-outlined text-sm align-middle m-2">person</span>
           Por Agentes
         </button>
         <button 
@@ -32,8 +32,8 @@
           [class.shadow-sm]="viewMode === 'queues'"
           [class.text-[#2E86AB]]="viewMode === 'queues'"
           [class.text-gray-600]="viewMode !== 'queues'"
-          class="px-4 py-2 rounded-lg text-sm font-medium transition-all">
-          <span class="material-icons-outlined text-sm align-middle mr-1">view_list</span>
+          class="p-2 rounded-r-[50px] text-sm font-medium transition-all hover:bg-white/50 hover:text-[#2E86AB] hover:scale-105">
+          <span class="material-icons-outlined text-sm align-middle m-2">view_list</span>
           Por Colas
         </button>
       </div>
@@ -41,7 +41,7 @@
       <!-- Selector de intervalo -->
       <select 
         (change)="changeRefreshInterval(+$any($event.target).value)"
-        class="px-4 py-2 border border-gray-200 rounded-xl text-sm bg-white">
+        class="p-4 border border-gray-200 rounded-[50px] text-sm bg-white ">
         <option value="5">Actualizar cada 5s</option>
         <option value="10">Actualizar cada 10s</option>
         <option value="30">Actualizar cada 30s</option>
@@ -126,7 +126,7 @@
     </div>
 
     <!-- Desconectados -->
-    <div class="stat-card fade-in-up">
+    <div class="stat-card fade-in-up rounded-[50px]">
       <div class="flex items-center gap-3">
         <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
           <span class="material-icons-outlined text-gray-600 text-xl">cancel</span>
@@ -186,11 +186,9 @@
       </div>
     </div>
   } -->
-
   <!-- Resumen de Estados -->
-
     <!-- Offline -->
-    <div class="stat-card fade-in-up">
+    <div class="stat-card fade-in-up rounded-[50px]">
       <div class="flex items-center gap-3">
         <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
           <span class="material-icons-outlined text-gray-600 text-xl">cancel</span>
@@ -204,9 +202,9 @@
   </div>
 
   <!-- Filtros -->
-  <div class="bg-white rounded-xl border border-gray-200 p-4 m-6 shadow-sm w-full">
+  <div class="bg-white rounded-[50px] border border-gray-200 p-4 m-6 shadow-sm">
     <div class="flex flex-wrap items-center gap-4">
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2 rounded-[50px] bg-gray-100 px-4 py-2">
         <span class="text-sm text-gray-600">Filtrar por estado:</span>
         <div class="flex gap-2">
           <button 
@@ -215,7 +213,7 @@
             [class.text-white]="selectedStatus === 'all'"
             [class.bg-gray-100]="selectedStatus !== 'all'"
             [class.text-gray-600]="selectedStatus !== 'all'"
-            class="px-3 py-1 rounded-lg text-sm font-medium transition-colors">
+            class="px-3 py-1 rounded-[15px] text-sm font-medium transition-colors">
             Todos
           </button>
           <button 
@@ -224,7 +222,7 @@
             [class.text-white]="selectedStatus === 'available'"
             [class.bg-gray-100]="selectedStatus !== 'available'"
             [class.text-gray-600]="selectedStatus !== 'available'"
-            class="px-3 py-1 rounded-lg text-sm font-medium transition-colors">
+            class="px-3 py-1 rounded-[15px]  text-sm font-medium transition-colors">
             Disponibles
           </button>
           <button 
@@ -233,7 +231,7 @@
             [class.text-white]="selectedStatus === 'busy'"
             [class.bg-gray-100]="selectedStatus !== 'busy'"
             [class.text-gray-600]="selectedStatus !== 'busy'"
-            class="px-3 py-1 rounded-lg text-sm font-medium transition-colors">
+            class="px-3 py-1 rounded-[15px]  text-sm font-medium transition-colors">
             En llamada
           </button>
           <button 
@@ -242,7 +240,7 @@
             [class.text-white]="selectedStatus === 'paused'"
             [class.bg-gray-100]="selectedStatus !== 'paused'"
             [class.text-gray-600]="selectedStatus !== 'paused'"
-            class="px-3 py-1 rounded-lg text-sm font-medium transition-colors">
+            class="px-3 py-1 rounded-[15px]  text-sm font-medium transition-colors">
             En pausa
           </button>
         </div>
@@ -253,7 +251,7 @@
           <span class="text-sm text-gray-600">Cola:</span>
           <select 
             [(ngModel)]="selectedQueue"
-            class="px-3 py-1 border border-gray-200 rounded-lg text-sm bg-white">
+            class="px-3 py-1 border border-gray-200 rounded-[15px] text-sm bg-white">
             <option value="all">Todas las colas</option>
             @for (queue of queues; track queue.id) {
               <option [value]="queue.id">{{ queue.name }}</option>
