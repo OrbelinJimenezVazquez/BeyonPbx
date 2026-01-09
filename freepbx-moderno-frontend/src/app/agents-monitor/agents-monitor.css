@@ -125,6 +125,10 @@ tbody tr:hover {
   background-color: #ef4444;
 }
 
+.status-dot.outbound {
+  background-color: #f97316;
+}
+
 .status-dot.paused {
   background-color: #f59e0b;
 }
